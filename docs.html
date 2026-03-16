@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>API Sector - Documentación</title>
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/swagger-ui-dist@5/swagger-ui.css"
+    />
+    <style>
+      /* Personalización para que no se vea tan genérico */
+      body {
+        margin: 0;
+        background-color: #f8fafc;
+      }
+
+      /* Header personalizado con estilo moderno */
+      .custom-header {
+        background: linear-gradient(90deg, #1e293b 0%, #334155 100%);
+        color: white;
+        padding: 1rem 2rem;
+        font-family: sans-serif;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .custom-header h1 {
+        margin: 0;
+        font-size: 1.5rem;
+        letter-spacing: 1px;
+      }
+
+      /* Ajustes de Swagger UI para mayor limpieza */
+      .swagger-ui .topbar {
+        display: none;
+      } /* Ocultamos la barra original */
+      .swagger-ui .info .title {
+        color: #1e293b;
+      }
+      .swagger-ui .scheme-container {
+        background: transparent;
+        box-shadow: none;
+      }
+    </style>
+  </head>
+  <body>
+    <header class="custom-header">
+      <h1>SECTOR API v1.0.0</h1>
+      <div>PROYECTO: DOCUMENTACIÓN</div>
+    </header>
+
+    <div id="swagger-ui"></div>
+
+    <script src="https://unpkg.com/swagger-ui-dist@5/swagger-ui-bundle.js"></script>
+    <script src="https://unpkg.com/swagger-ui-dist@5/swagger-ui-standalone-preset.js"></script>
+
+    <script>
+      window.onload = () => {
+        const ui = SwaggerUIBundle({
+          url: "./swagger.yaml", // Cargar el archivo externo
+          dom_id: "#swagger-ui",
+          deepLinking: true,
+          presets: [SwaggerUIBundle.presets.apis, SwaggerUIStandalonePreset],
+          layout: "BaseLayout",
+        });
+
+        window.ui = ui;
+      };
+    </script>
+  </body>
+</html>

@@ -1,0 +1,886 @@
+openapi: 3.0.0
+info:
+  title: API de Sector
+  description: Documentación completa de la API para la gestión de Pastores, Iglesias e Hijos.
+  version: 1.0.0
+servers:
+  - url: http://localhost/Sector
+    description: Servidor Local
+
+tags:
+  - name: Pastores
+    description: Gestión de pastores
+  - name: Iglesias
+    description: Gestión de iglesias
+  - name: Hijos
+    description: Gestión de hijos de pastores
+  - name: Reportes
+    description: Gestión de reportes mensuales de diezmos y ofrendas
+  - name: Reuniones
+    description: Gestión de reuniones y asistencia
+  - name: Inasistencias
+    description: Gestión detallada de inasistencias
+
+paths:
+  /path:
+    get:
+      summary: Ejemplo de endpoint simple
+      description: Sirve para probar la conexión desde el frontend (dev/demo).
+      responses:
+        "200":
+          description: Retorna un mensaje de éxito y la fecha actual
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Endpoint de ejemplo funcionando"
+                  time:
+                    type: string
+                    format: date-time
+                    example: "2026-02-27T12:00:00Z"
+  # --------------------------------------------------------------------------------
+  # PASTORES
+  # --------------------------------------------------------------------------------
+  /pastores:
+    get:
+      tags:
+        - Pastores
+      summary: Obtener lista de pastores
+      description: Retorna una lista de todos los pastores o un pastor específico si se proporciona el ID.
+      parameters:
+        - in: query
+          name: id
+          schema:
+            type: integer
+          description: ID del pastor para filtrar (opcional)
+      responses:
+        "200":
+          description: Operación exitosa
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: array
+                    items:
+                      $ref: "#/components/schemas/Pastor"
+                  - $ref: "#/components/schemas/Pastor"
+    post:
+      tags:
+        - Pastores
+      summary: Crear un nuevo pastor
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PastorInput"
+      responses:
+        "200":
+          description: Pastor creado con éxito
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Pastor creado con éxito"
+                  id:
+                    type: string
+                    example: "15"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+
+    put:
+      tags:
+        - Pastores
+      summary: Actualizar un pastor existente
+      parameters:
+        - in: query
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: ID del pastor a actualizar
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PastorInput"
+      responses:
+        "200":
+          description: Pastor actualizado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Pastor actualizado con éxito"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+
+    delete:
+      tags:
+        - Pastores
+      summary: Eliminar un pastor
+      parameters:
+        - in: query
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: ID del pastor a eliminar
+      responses:
+        "200":
+          description: Pastor eliminado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Pastor eliminado correctamente"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+
+  # --------------------------------------------------------------------------------
+  # IGLESIAS
+  # --------------------------------------------------------------------------------
+  /iglesias:
+    get:
+      tags:
+        - Iglesias
+      summary: Obtener lista de iglesias
+      description: Retorna todas las iglesias, una específica por ID, o filtradas por zona.
+      parameters:
+        - in: query
+          name: id
+          schema:
+            type: integer
+          description: ID de la iglesia para filtrar
+        - in: query
+          name: zona
+          schema:
+            type: integer
+          description: Número de zona para filtrar iglesias
+      responses:
+        "200":
+          description: Operación exitosa
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: array
+                    items:
+                      $ref: "#/components/schemas/Iglesia"
+                  - $ref: "#/components/schemas/Iglesia"
+    post:
+      tags:
+        - Iglesias
+      summary: Crear una nueva iglesia
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/IglesiaInput"
+      responses:
+        "200":
+          description: Iglesia registrada con éxito
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Iglesia registrada con éxito"
+                  id:
+                    type: string
+                    example: "5"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+
+    put:
+      tags:
+        - Iglesias
+      summary: Actualizar una iglesia
+      parameters:
+        - in: query
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: ID de la iglesia a actualizar
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/IglesiaInput"
+      responses:
+        "200":
+          description: Datos actualizados
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Datos de la iglesia actualizados"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+
+    delete:
+      tags:
+        - Iglesias
+      summary: Eliminar una iglesia
+      parameters:
+        - in: query
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: ID de la iglesia a eliminar
+      responses:
+        "200":
+          description: Iglesia eliminada
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Iglesia eliminada correctamente"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+
+  # --------------------------------------------------------------------------------
+  # HIJOS
+  # --------------------------------------------------------------------------------
+  /hijos:
+    get:
+      tags:
+        - Hijos
+      summary: Obtener lista de hijos
+      description: Retorna todos los hijos, un hijo específico por ID, o los hijos de un pastor específico.
+      parameters:
+        - in: query
+          name: id
+          schema:
+            type: integer
+          description: ID del hijo para filtrar
+        - in: query
+          name: id_pastor
+          schema:
+            type: integer
+          description: ID del pastor para obtener sus hijos
+      responses:
+        "200":
+          description: Operación exitosa
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: array
+                    items:
+                      $ref: "#/components/schemas/Hijo"
+                  - $ref: "#/components/schemas/Hijo"
+    post:
+      tags:
+        - Hijos
+      summary: Registrar un hijo de pastor
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/HijoInput"
+      responses:
+        "200":
+          description: Hijo registrado con éxito
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Hijo(a) registrado con éxito"
+                  id:
+                    type: string
+                    example: "10"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+
+    put:
+      tags:
+        - Hijos
+      summary: Actualizar datos de un hijo
+      parameters:
+        - in: query
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: ID del hijo a actualizar
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/HijoInput"
+      responses:
+        "200":
+          description: Datos actualizados
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Datos del hijo(a) actualizados"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+
+    delete:
+      tags:
+        - Hijos
+      summary: Eliminar el registro de un hijo
+      parameters:
+        - in: query
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: ID del hijo a eliminar
+      responses:
+        "200":
+          description: Registro eliminado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Registro eliminado"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+
+  # --------------------------------------------------------------------------------
+  # REPORTES
+  # --------------------------------------------------------------------------------
+  /reporte:
+    get:
+      tags:
+        - Reportes
+      summary: Obtener reportes
+      description: Retorna todos los reportes, uno específico por ID, o filtrados por pastor.
+      parameters:
+        - in: query
+          name: id
+          schema:
+            type: integer
+          description: ID del reporte para filtrar
+        - in: query
+          name: id_pastor
+          schema:
+            type: integer
+          description: ID del pastor para obtener sus reportes
+      responses:
+        "200":
+          description: Operación exitosa
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: array
+                    items:
+                      $ref: "#/components/schemas/Reporte"
+                  - $ref: "#/components/schemas/Reporte"
+    post:
+      tags:
+        - Reportes
+      summary: Crear un nuevo reporte mensual
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ReporteInput"
+      responses:
+        "200":
+          description: Reporte creado con éxito
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Reporte creado con éxito"
+                  id:
+                    type: string
+                    example: "45"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+
+    put:
+      tags:
+        - Reportes
+      summary: Actualizar un reporte existente
+      parameters:
+        - in: query
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: ID del reporte a actualizar
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ReporteUpdate"
+      responses:
+        "200":
+          description: Reporte actualizado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Reporte actualizado correctamente"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+
+    delete:
+      tags:
+        - Reportes
+      summary: Eliminar un reporte
+      parameters:
+        - in: query
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: ID del reporte a eliminar
+      responses:
+        "200":
+          description: Reporte eliminado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Reporte eliminado"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+
+  # --------------------------------------------------------------------------------
+  # REUNIONES
+  # --------------------------------------------------------------------------------
+  /reunion:
+    get:
+      tags:
+        - Reuniones
+      summary: Obtener reuniones o inasistencias por reunión
+      description: |
+        Si no se proporcionan parámetros, lista todas las reuniones.
+        Si se proporciona `id_reunion`, lista los pastores con su estado de asistencia/inasistencia para esa reunión.
+      parameters:
+        - in: query
+          name: id_reunion
+          schema:
+            type: integer
+          description: ID de la reunión para ver inasistencias (opcional)
+      responses:
+        "200":
+          description: Lista de reuniones o lista de inasistencias
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: array
+                    items:
+                      $ref: "#/components/schemas/Reunion"
+                  - type: array
+                    items:
+                      $ref: "#/components/schemas/ReunionInasistencia"
+    post:
+      tags:
+        - Reuniones
+      summary: Crear reunión o registrar inasistencia
+      description: |
+        Este endpoint es polimórfico:
+        - Si el cuerpo incluye `id_pastor`, registra una inasistencia.
+        - Si NO incluye `id_pastor`, crea una nueva reunión.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - $ref: "#/components/schemas/ReunionInput"
+                - $ref: "#/components/schemas/InasistenciaInput"
+      responses:
+        "200":
+          description: Operación exitosa
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  id:
+                    type: string
+        "400":
+          $ref: "#/components/responses/BadRequest"
+
+    delete:
+      tags:
+        - Reuniones
+      summary: Eliminar una reunión
+      parameters:
+        - in: query
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: ID de la reunión a eliminar
+      responses:
+        "200":
+          description: Reunión eliminada
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Reunión y sus inasistencias eliminadas"
+        "500":
+          description: Error del servidor
+
+  # --------------------------------------------------------------------------------
+  # INASISTENCIAS
+  # --------------------------------------------------------------------------------
+  /inasistencias:
+    get:
+      tags:
+        - Inasistencias
+      summary: Gestionar inasistencias
+      description: Obtiene lista de asistencia por reunión o lista global de inasistencias.
+      parameters:
+        - in: query
+          name: id_reunion
+          schema:
+            type: integer
+          description: ID de la reunión para ver reporte de asistencia completo
+      responses:
+        "200":
+          description: Lista de inasistencias o estado de pastores
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/InasistenciaDetalle"
+    post:
+      tags:
+        - Inasistencias
+      summary: Registrar inasistencia explícita
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/InasistenciaInput"
+      responses:
+        "200":
+          description: Inasistencia registrada
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        "400":
+          $ref: "#/components/responses/BadRequest"
+
+    delete:
+      tags:
+        - Inasistencias
+      summary: Eliminar una inasistencia (Marcar como Asistió)
+      parameters:
+        - in: query
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: ID de la inasistencia a eliminar
+      responses:
+        "200":
+          description: Inasistencia eliminada
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+
+components:
+  schemas:
+    # --- PASTOR ---
+    PastorInput:
+      type: object
+      properties:
+        nombre:
+          type: string
+        apellido:
+          type: string
+        cedula:
+          type: string
+        edad:
+          type: integer
+        esposa:
+          type: string
+        hijos:
+          type: integer
+          description: Cantidad de hijos
+        anos_ministerio:
+          type: integer
+        tipo_licencia:
+          type: string
+        cargo:
+          type: string
+        id_iglesia:
+          type: integer
+        zona:
+          type: integer
+    Pastor:
+      allOf:
+        - type: object
+          properties:
+            id_pastor:
+              type: integer
+        - $ref: "#/components/schemas/PastorInput"
+
+    # --- IGLESIA ---
+    IglesiaInput:
+      type: object
+      properties:
+        nombre_iglesia:
+          type: string
+        direccion:
+          type: string
+        cantidad_miembros:
+          type: integer
+        zona:
+          type: integer
+    Iglesia:
+      allOf:
+        - type: object
+          properties:
+            id_iglesia:
+              type: integer
+        - $ref: "#/components/schemas/IglesiaInput"
+
+    # --- HIJO ---
+    HijoInput:
+      type: object
+      properties:
+        id_pastor:
+          type: integer
+        nombre:
+          type: string
+        apellido:
+          type: string
+        sexo:
+          type: string
+          enum: [Masculino, Femenino]
+        edad:
+          type: integer
+    Hijo:
+      allOf:
+        - type: object
+          properties:
+            id_hijo:
+              type: integer
+        - $ref: "#/components/schemas/HijoInput"
+
+    # --- REPORTE ---
+    ReporteInput:
+      type: object
+      properties:
+        id_pastor:
+          type: integer
+        id_iglesia:
+          type: integer
+        mes_reportado:
+          type: integer
+        anio_reportado:
+          type: integer
+        diezmos_bs:
+          type: number
+          format: float
+        poder_del_uno_bs:
+          type: number
+          format: float
+        unica_sectorial_bs:
+          type: number
+          format: float
+        campamento_bs:
+          type: number
+          format: float
+        convencion_bs:
+          type: number
+          format: float
+        diezmos_usd:
+          type: number
+          format: float
+        poder_del_uno_usd:
+          type: number
+          format: float
+        unica_sectorial_usd:
+          type: number
+          format: float
+        campamento_usd:
+          type: number
+          format: float
+        convencion_usd:
+          type: number
+          format: float
+        tipo_pago:
+          type: string
+          description: Transferencia, Pago Móvil, Efectivo, etc.
+        banco_destino:
+          type: string
+        fecha_pago:
+          type: string
+          format: date
+        referencia:
+          type: string
+
+    ReporteUpdate:
+      type: object
+      properties:
+        mes_reportado:
+          type: integer
+        anio_reportado:
+          type: integer
+        diezmos_bs:
+          type: number
+          format: float
+        diezmos_usd:
+          type: number
+          format: float
+        tipo_pago:
+          type: string
+
+    Reporte:
+      allOf:
+        - type: object
+          properties:
+            id_reporte:
+              type: integer
+        - $ref: "#/components/schemas/ReporteInput"
+
+    # --- REUNION ---
+    ReunionInput:
+      type: object
+      properties:
+        titulo:
+          type: string
+        fecha:
+          type: string
+          format: date
+        lugar:
+          type: string
+        descripcion:
+          type: string
+
+    Reunion:
+      allOf:
+        - type: object
+          properties:
+            id_reunion:
+              type: integer
+        - $ref: "#/components/schemas/ReunionInput"
+
+    # --- INASISTENCIA ---
+    InasistenciaInput:
+      type: object
+      properties:
+        id_reunion:
+          type: integer
+        id_pastor:
+          type: integer
+        motivo:
+          type: string
+        justificada:
+          type: integer
+          description: 0 = No, 1 = Si
+
+    InasistenciaDetalle:
+      type: object
+      properties:
+        id_inasistencia:
+          type: integer
+        id_pastor:
+          type: integer
+        nombre:
+          type: string
+        apellido:
+          type: string
+        estatus:
+          type: string
+          example: "Asistió"
+        motivo:
+          type: string
+        justificada:
+          type: integer
+
+    ReunionInasistencia:
+      type: object
+      properties:
+        id_inasistencia:
+          type: integer
+        nombre:
+          type: string
+        apellido:
+          type: string
+        motivo:
+          type: string
+        justificada:
+          type: integer
+
+  responses:
+    BadRequest:
+      description: Solicitud incorrecta o datos faltantes
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "ID y datos requeridos"
