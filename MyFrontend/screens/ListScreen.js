@@ -4,6 +4,13 @@ import {
   TouchableOpacity, SafeAreaView, RefreshControl, TextInput 
 } from 'react-native';
 import config from '../config';
+import Header from '../components/common/Header';
+import SearchBar from '../components/common/SearchBar';
+import PastorListItem from '../components/listItems/PastorListItem';
+import IglesiaListItem from '../components/listItems/IglesiaListItem';
+import ReporteListItem from '../components/listItems/ReporteListItem';
+import ReunionListItem from '../components/listItems/ReunionListItem';
+import HijoListItem from '../components/listItems/HijoListItem';
 
 export default function ListScreen({ route, navigation }) {
   const { path, title } = route.params;
@@ -66,82 +73,34 @@ export default function ListScreen({ route, navigation }) {
   };
 
   const renderItem = ({ item }) => {
-    const primaryKey = path === 'pastores' ? 'id_pastor' : 
-                       path === 'reporte' ? 'id_reporte' : 
-                       path === 'hijos' ? 'id_hijo' :
-                       `id_${path.replace(/es$/, '').replace(/s$/, '')}`;
+    const onPress = () => {
+      if (path === 'reporte') {
+        navigation.navigate('DetalleReporte', { item });
+      } else {
+        navigation.navigate('Edit', { path, item, origin: 'List' });
+      }
+    };
 
-    return (
-      <TouchableOpacity 
-        style={styles.card}
-        onPress={() => {
-          if (path === 'reporte') {
-            navigation.navigate('DetalleReporte', { item });
-          } else {
-            navigation.navigate('Edit', { path, item, origin: 'List' });
-          }
-        }}
-      >
-        <View style={styles.cardHeader}>
-          <Text style={styles.mainLabel}>
-            {path === 'reuniones' ? (item.titulo || "Sin título") : 
-             item.nombre ? `${item.nombre} ${item.apellido || ''}` : 
-             (item.nombre_iglesia || item.iglesia_nombre || item.titulo || 'Sin ID')}
-          </Text>
-          <Text style={styles.idBadge}>#{item[primaryKey]}</Text>
-        </View>
-        
-        {path === 'reuniones' && (
-          <View>
-            <Text style={styles.infoText}>📅 Fecha: {item.fecha}</Text>
-            <Text style={styles.infoText}>📍 Lugar: {item.lugar}</Text>
-          </View>
-        )}
-
-        {path === 'reporte' && (
-          <View>
-            <Text style={styles.infoText}>⛪ Iglesia: <Text style={{fontWeight: 'bold'}}>{item.nombre_iglesia || item.iglesia_nombre}</Text></Text>
-            <Text style={[styles.infoText, { color: '#1A237E' }]}>👤 Pastor: {item.apellido || item.nombre_pastor}</Text>
-            <Text style={styles.subText}>Periodo: {item.mes_reportado}/{item.anio_reportado}</Text>
-          </View>
-        )}
-
-        {path === 'iglesias' && (
-          <View>
-            <Text style={styles.infoText}>📍 {item.direccion}</Text>
-            <Text style={styles.subText}>Miembros: {item.cantidad_miembros}</Text>
-            <View style={styles.badgeRow}>
-              {parseInt(item.tiene_terreno) === 1 && (
-                <View style={styles.propBadge}><Text style={styles.propText}>🌱 Terreno</Text></View>
-              )}
-              {parseInt(item.tiene_casa_pastoral) === 1 && (
-                <View style={[styles.propBadge, {backgroundColor:'#E8F5E9'}]}><Text style={[styles.propText, {color:'#2E7D32'}]}>🏠 Casa</Text></View>
-              )}
-            </View>
-          </View>
-        )}
-
-        {path === 'pastores' && (
-          <View>
-            <Text style={styles.infoText}>C.I: {item.cedula}</Text>
-            <Text style={styles.subText}>Zona: {item.zona || 'N/A'}</Text>
-          </View>
-        )}
-      </TouchableOpacity>
-    );
+    switch (path) {
+      case 'pastores':
+        return <PastorListItem item={item} onPress={onPress} />;
+      case 'iglesias':
+        return <IglesiaListItem item={item} onPress={onPress} />;
+      case 'reporte':
+        return <ReporteListItem item={item} onPress={onPress} />;
+      case 'reuniones':
+        return <ReunionListItem item={item} onPress={onPress} />;
+      case 'hijos':
+        return <HijoListItem item={item} onPress={onPress} />;
+      default:
+        return <PastorListItem item={item} onPress={onPress} />; // fallback
+    }
   };
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.title}>{title}</Text>
-        <TouchableOpacity style={styles.btnAdd} onPress={() => navigation.navigate('Edit', { path, item: {}, origin: 'List' })}>
-          <Text style={styles.btnAddText}>+ Nuevo</Text>
-        </TouchableOpacity>
-      </View>
-      <View style={styles.searchContainer}>
-        <TextInput style={styles.searchInput} placeholder="Buscar..." value={searchText} onChangeText={handleSearch} />
-      </View>
+      <Header title={title} onAddPress={() => navigation.navigate('Edit', { path, item: {}, origin: 'List' })} />
+      <SearchBar value={searchText} onChangeText={handleSearch} />
       {loading && !refreshing ? (
         <ActivityIndicator size="large" color="#1A237E" style={{ marginTop: 20 }} />
       ) : (
@@ -159,19 +118,4 @@ export default function ListScreen({ route, navigation }) {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#F8F9FA' },
-  header: { flexDirection: 'row', justifyContent: 'space-between', padding: 20, backgroundColor: '#FFF' },
-  title: { fontSize: 20, fontWeight: 'bold', color: '#1A237E' },
-  btnAdd: { backgroundColor: '#E8EAF6', padding: 8, borderRadius: 8 },
-  btnAddText: { color: '#1A237E', fontWeight: 'bold' },
-  searchContainer: { paddingHorizontal: 15, paddingBottom: 10, backgroundColor: '#FFF' },
-  searchInput: { backgroundColor: '#F1F3F4', padding: 10, borderRadius: 8 },
-  card: { backgroundColor: '#FFF', borderRadius: 12, padding: 15, marginBottom: 12, elevation: 3 },
-  cardHeader: { flexDirection: 'row', justifyContent: 'space-between', borderBottomWidth: 1, borderBottomColor: '#F0F0F0', paddingBottom: 5, marginBottom: 8 },
-  mainLabel: { fontSize: 16, fontWeight: 'bold', color: '#333', flex: 1 },
-  idBadge: { backgroundColor: '#E8EAF6', paddingHorizontal: 6, borderRadius: 4, color: '#1A237E', fontSize: 12 },
-  infoText: { fontSize: 14, color: '#555', marginBottom: 2 },
-  subText: { fontSize: 12, color: '#777' },
-  badgeRow: { flexDirection: 'row', marginTop: 8, gap: 5 },
-  propBadge: { backgroundColor: '#FFF3E0', paddingHorizontal: 6, paddingVertical: 2, borderRadius: 4 },
-  propText: { fontSize: 10, fontWeight: 'bold', color: '#E65100' }
 });

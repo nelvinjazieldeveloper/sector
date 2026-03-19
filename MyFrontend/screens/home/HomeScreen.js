@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView, SafeAreaView } from 'react-native';
-import config from '../config';
+import config from '../../config';
 
 const MenuButton = ({ title, onPress, subtitle }) => (
   <TouchableOpacity style={styles.card} onPress={onPress} activeOpacity={0.7}>
@@ -36,11 +36,11 @@ export default function HomeScreen({ navigation }) {
         {error && <Text style={styles.errorText}>Error de conexión: {error}</Text>}
 
         <View style={styles.menuGrid}>
-          <MenuButton title="Pastores" subtitle="Gestión ministerial" onPress={() => navigation.navigate('Pastores')} />
-          <MenuButton title="Iglesias" subtitle="Sedes y membresía" onPress={() => navigation.navigate('Iglesias')} />
-          <MenuButton title="Hijos" subtitle="Registro familiar" onPress={() => navigation.navigate('Hijos')} />
-          <MenuButton title="Reportes" subtitle="Finanzas y estadísticas" onPress={() => navigation.navigate('Reportes')} />
-          <MenuButton title="Reuniones" subtitle="Agenda sectorial" onPress={() => navigation.navigate('Reuniones')} />
+          <MenuButton title="Pastores" subtitle="Gestión ministerial" onPress={() => navigation.navigate('Pastores', { path: 'pastores', title: 'Pastores' })} />
+          <MenuButton title="Iglesias" subtitle="Sedes y membresía" onPress={() => navigation.navigate('Iglesias', { path: 'iglesias', title: 'Iglesias' })} />
+          <MenuButton title="Hijos" subtitle="Registro familiar" onPress={() => navigation.navigate('Hijos', { path: 'hijos', title: 'Hijos' })} />
+          <MenuButton title="Reportes" subtitle="Finanzas y estadísticas" onPress={() => navigation.navigate('Reportes', { path: 'reporte', title: 'Reportes' })} />
+          <MenuButton title="Reuniones" subtitle="Agenda sectorial" onPress={() => navigation.navigate('Reuniones', { path: 'reuniones', title: 'Reuniones' })} />
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -54,20 +54,18 @@ const styles = StyleSheet.create({
   title: { fontSize: 28, fontWeight: 'bold', color: '#1A237E' },
   menuGrid: { gap: 15 },
   card: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 15,
+    backgroundColor: '#FFF',
+    borderRadius: 12,
     padding: 20,
+    marginBottom: 15,
+    elevation: 3,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    elevation: 3,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
   },
-  cardTitle: { fontSize: 18, fontWeight: 'bold', color: '#333' },
-  cardSubtitle: { fontSize: 14, color: '#888', marginTop: 2 },
-  arrow: { fontSize: 20, color: '#1A237E', fontWeight: 'bold' },
+  cardContent: { flex: 1 },
+  cardTitle: { fontSize: 18, fontWeight: 'bold', color: '#1A237E', marginBottom: 5 },
+  cardSubtitle: { fontSize: 14, color: '#666' },
+  arrow: { fontSize: 20, color: '#1A237E' },
   errorText: { color: '#D32F2F', textAlign: 'center', marginBottom: 10 }
 });
