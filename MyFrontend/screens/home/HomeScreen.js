@@ -87,7 +87,7 @@ export default function HomeScreen({ navigation }) {
           </View>
           <View>
             <Text style={styles.welcome}>Bienvenido,</Text>
-            <Text style={styles.title}>Sector Nor Occidente 1</Text>
+            <Text style={styles.title}>Efecto Esdras</Text>
           </View>
         </View>
       </View>
