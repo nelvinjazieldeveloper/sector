@@ -3,9 +3,9 @@ import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 
 const IglesiaListItem = ({ item, onPress }) => {
   return (
-    <TouchableOpacity style={styles.card} onPress={onPress}>
+    <TouchableOpacity style={[styles.card, { borderLeftColor: '#1A237E', borderLeftWidth: 5 }]} onPress={onPress}>
       <View style={styles.cardHeader}>
-        <Text style={styles.mainLabel}>{item.nombre_iglesia || item.iglesia_nombre}</Text>
+        <Text style={[styles.mainLabel, { color: '#1A237E' }]}>{item.nombre_iglesia || item.iglesia_nombre}</Text>
         <Text style={styles.idBadge}>#{item.id_iglesia}</Text>
       </View>
       <View>
@@ -25,14 +25,14 @@ const IglesiaListItem = ({ item, onPress }) => {
 };
 
 const styles = StyleSheet.create({
-  card: { backgroundColor: '#FFF', borderRadius: 12, padding: 15, marginBottom: 12, elevation: 3 },
+  card: { backgroundColor: '#FFF', borderRadius: 12, padding: 15, marginBottom: 12, elevation: 3, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.1, shadowRadius: 4 },
   cardHeader: { flexDirection: 'row', justifyContent: 'space-between', borderBottomWidth: 1, borderBottomColor: '#F0F0F0', paddingBottom: 5, marginBottom: 8 },
-  mainLabel: { fontSize: 16, fontWeight: 'bold', color: '#333', flex: 1 },
-  idBadge: { backgroundColor: '#E8EAF6', paddingHorizontal: 6, borderRadius: 4, color: '#1A237E', fontSize: 12 },
+  mainLabel: { fontSize: 16, fontWeight: 'bold', color: '#1A237E', flex: 1 },
+  idBadge: { backgroundColor: '#E8EAF6', paddingHorizontal: 8, borderRadius: 6, color: '#1A237E', fontSize: 12, fontWeight: 'bold' },
   infoText: { fontSize: 14, color: '#555', marginBottom: 2 },
   subText: { fontSize: 12, color: '#777' },
   badgeRow: { flexDirection: 'row', marginTop: 8, gap: 5 },
-  propBadge: { backgroundColor: '#FFF3E0', paddingHorizontal: 6, paddingVertical: 2, borderRadius: 4 },
+  propBadge: { backgroundColor: '#FFF3E0', paddingHorizontal: 8, paddingVertical: 4, borderRadius: 6 },
   propText: { fontSize: 10, fontWeight: 'bold', color: '#E65100' },
 });
 

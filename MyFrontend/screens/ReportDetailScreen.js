@@ -1,8 +1,18 @@
 import React from 'react';
-import { View, Text, ScrollView, StyleSheet, SafeAreaView, TouchableOpacity } from 'react-native';
+import { View, Text, ScrollView, StyleSheet, SafeAreaView, TouchableOpacity, Animated } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 
 export default function ReportDetailScreen({ route, navigation }) {
   const { item } = route.params;
+  const fadeAnim = React.useRef(new Animated.Value(0)).current;
+
+  React.useEffect(() => {
+    Animated.timing(fadeAnim, {
+      toValue: 1,
+      duration: 500,
+      useNativeDriver: true,
+    }).start();
+  }, []);
 
   // Componente interno para filas de datos
   const InfoRow = ({ label, value, color = "#333", bold = false }) => (
@@ -15,14 +25,16 @@ export default function ReportDetailScreen({ route, navigation }) {
   );
 
   return (
-    <ScrollView 
-      style={{ flex: 1, backgroundColor: '#F0F2F5' }} 
-      contentContainerStyle={[{ flexGrow: 1 }, styles.scroll]}
-      showsVerticalScrollIndicator={true}
-      nestedScrollEnabled={true}
-      scrollEnabled={true}
-      keyboardShouldPersistTaps="handled"
-    >
+    <LinearGradient colors={['#1A237E', '#3949AB']} style={{ flex: 1 }}>
+      <Animated.View style={{ flex: 1, opacity: fadeAnim }}>
+        <ScrollView 
+          style={{ flex: 1 }} 
+          contentContainerStyle={[{ flexGrow: 1 }, styles.scroll]}
+          showsVerticalScrollIndicator={true}
+          nestedScrollEnabled={true}
+          scrollEnabled={true}
+          keyboardShouldPersistTaps="handled"
+        >
       {/* ENCABEZADO PRINCIPAL */}
         <View style={styles.headerCard}>
           <Text style={styles.churchTitle}>⛪ {item.iglesia_nombre}</Text>
@@ -38,8 +50,10 @@ export default function ReportDetailScreen({ route, navigation }) {
           <InfoRow label="Diezmos" value={`Bs. ${item.diezmos_bs}`} bold />
           <InfoRow label="Poder del Uno" value={`Bs. ${item.poder_del_uno_bs}`} />
           <InfoRow label="Única Sectorial" value={`Bs. ${item.unica_sectorial_bs}`} />
+          <InfoRow label="Campamento" value={`Bs. ${item.campamento_bs}`} />
           <InfoRow label="Convención" value={`Bs. ${item.convencion_bs}`} />
-          <InfoRow label="Misiones" value={`Bs. ${item.misiones}`} />
+          {item.ofrenda_1_nombre && <InfoRow label={item.ofrenda_1_nombre} value={`Bs. ${item.ofrenda_1_bs}`} />}
+          {item.ofrenda_2_nombre && <InfoRow label={item.ofrenda_2_nombre} value={`Bs. ${item.ofrenda_2_bs}`} />}
         </View>
 
         {/* SECCIÓN DÓLARES (USD) */}
@@ -47,14 +61,18 @@ export default function ReportDetailScreen({ route, navigation }) {
           <Text style={[styles.sectionTitle, { color: '#2E7D32' }]}>🇺🇸 Finanzas en Dólares</Text>
           <InfoRow label="Diezmos" value={`$ ${item.diezmos_usd}`} bold color="#2E7D32" />
           <InfoRow label="Poder del Uno" value={`$ ${item.poder_del_uno_usd}`} />
+          <InfoRow label="Única Sectorial" value={`$ ${item.unica_sectorial_usd}`} />
+          <InfoRow label="Campamento" value={`$ ${item.campamento_usd}`} />
           <InfoRow label="Convención" value={`$ ${item.convencion_usd}`} />
+          {parseFloat(item.ofrenda_1_usd) > 0 && <InfoRow label="Ofrenda 1" value={`$ ${item.ofrenda_1_usd}`} />}
         </View>
 
-        {/* SECCIÓN PESOS (COP) */}
-        {(item.diezmos_cop > 0) && (
+        {(parseFloat(item.diezmos_cop) > 0 || parseFloat(item.poder_del_uno_cop) > 0) && (
           <View style={[styles.section, { borderLeftColor: '#FFD700', borderLeftWidth: 4 }]}>
             <Text style={[styles.sectionTitle, { color: '#8B7500' }]}>🇨🇴 Finanzas en Pesos</Text>
-            <InfoRow label="Diezmos COP" value={`${item.diezmos_cop} COP`} />
+            <InfoRow label="Diezmos" value={`${item.diezmos_cop} COP`} />
+            <InfoRow label="Poder del Uno" value={`${item.poder_del_uno_cop} COP`} />
+            <InfoRow label="Única Sectorial" value={`${item.unica_sectorial_cop} COP`} />
           </View>
         )}
 
@@ -82,7 +100,9 @@ export default function ReportDetailScreen({ route, navigation }) {
         >
           <Text style={styles.editBtnText}>MODIFICAR REPORTE</Text>
         </TouchableOpacity>
-    </ScrollView>
+      </ScrollView>
+      </Animated.View>
+    </LinearGradient>
   );
 }
 

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   View,
   Text,
@@ -8,13 +8,54 @@ import {
   StyleSheet,
   TouchableOpacity,
   Alert,
+  Animated,
 } from "react-native";
+import { Picker } from "@react-native-picker/picker";
+import { LinearGradient } from "expo-linear-gradient";
 import config from "../config";
 
 export default function EditScreen({ route, navigation }) {
   const { path, item } = route.params;
-  const [formData, setFormData] = useState(item || {});
-  const [loading, setLoading] = useState(false);
+  const [formData, setFormData] = React.useState(item || {});
+  const fadeAnim = React.useRef(new Animated.Value(0)).current;
+  const scaleAnimSave = React.useRef(new Animated.Value(1)).current;
+  const scaleAnimCancel = React.useRef(new Animated.Value(1)).current;
+
+  const animateButton = (anim, toValue) => {
+    Animated.spring(anim, {
+      toValue,
+      useNativeDriver: true,
+      friction: 4,
+    }).start();
+  };
+
+  React.useEffect(() => {
+    Animated.timing(fadeAnim, {
+      toValue: 1,
+      duration: 500,
+      useNativeDriver: true,
+    }).start();
+  }, []);
+  const [loading, setLoading] = React.useState(false);
+  const [iglesiasList, setIglesiasList] = React.useState([]);
+  const [pastoresList, setPastoresList] = React.useState([]);
+
+  React.useEffect(() => {
+    // Carga de Iglesias
+    if (["pastores", "iglesias", "hijos", "reporte"].includes(path)) {
+      fetch(`${config.API_URL}/iglesias/`)
+        .then((r) => r.json())
+        .then((data) => setIglesiasList(Array.isArray(data) ? data : []))
+        .catch((e) => console.log("Error IG fetch", e));
+    }
+    // Carga de Pastores
+    if (["hijos", "reporte"].includes(path)) {
+      fetch(`${config.API_URL}/pastores/`)
+        .then((r) => r.json())
+        .then((data) => setPastoresList(Array.isArray(data) ? data : []))
+        .catch((e) => console.log("Error PT fetch", e));
+    }
+  }, [path]);
 
   const handleSave = async () => {
     // 1. Validación básica antes de enviar
@@ -84,6 +125,24 @@ export default function EditScreen({ route, navigation }) {
     </View>
   );
 
+  const renderPicker = (label, key, options) => (
+    <View style={styles.inputGroup}>
+      <Text style={styles.label}>{label}</Text>
+      <View style={styles.pickerContainer}>
+        <Picker
+          selectedValue={formData[key]}
+          onValueChange={(itemValue) => setFormData({ ...formData, [key]: itemValue })}
+          style={styles.picker}
+        >
+          <Picker.Item label="Seleccione una opción..." value="" />
+          {options.map((opt, i) => (
+            <Picker.Item key={i} label={String(opt.label)} value={opt.value} />
+          ))}
+        </Picker>
+      </View>
+    </View>
+  );
+
   const renderSwitch = (label, key) => (
     <TouchableOpacity
       style={styles.switchRow}
@@ -97,14 +156,16 @@ export default function EditScreen({ route, navigation }) {
   );
 
   return (
-    <ScrollView 
-      style={{ flex: 1, backgroundColor: "#F8F9FA" }} 
-      contentContainerStyle={{ flexGrow: 1, padding: 20, paddingBottom: 100 }}
-      showsVerticalScrollIndicator={true}
-      nestedScrollEnabled={true}
-      scrollEnabled={true}
-      keyboardShouldPersistTaps="handled"
-    >
+    <LinearGradient colors={["#1A237E", "#3949AB"]} style={{ flex: 1 }}>
+      <Animated.View style={{ flex: 1, opacity: fadeAnim }}>
+        <ScrollView 
+          style={{ flex: 1 }} 
+          contentContainerStyle={{ flexGrow: 1, padding: 20, paddingBottom: 100 }}
+          showsVerticalScrollIndicator={true}
+          nestedScrollEnabled={true}
+          scrollEnabled={true}
+          keyboardShouldPersistTaps="handled"
+        >
       <Text style={styles.headerTitle}>
         {item.id ? "Editar" : "Nuevo"} Registro
       </Text>
@@ -120,8 +181,8 @@ export default function EditScreen({ route, navigation }) {
           {renderInput("Años de Ministerio", "anos_ministerio", "numeric")}
           {renderInput("Tipo Licencia", "tipo_licencia")}
           {renderInput("Cargo", "cargo")}
-          {renderInput("ID de Iglesia", "id_iglesia", "numeric")}
-          {renderInput("Zona", "zona", "numeric")}
+          {renderPicker("Iglesia", "id_iglesia", iglesiasList.map(ig => ({label: ig.nombre_iglesia, value: ig.id_iglesia})))}
+          {renderPicker("Zona", "zona", [1,2,3,4,5,6].map(z => ({label: `Zona ${z}`, value: z})))}
           <View style={styles.infraBox}>
             {renderSwitch("Pastor Activo", "estatus_activo")}
           </View>
@@ -133,7 +194,7 @@ export default function EditScreen({ route, navigation }) {
           {renderInput("Nombre de la Iglesia", "nombre_iglesia")}
           {renderInput("Dirección", "direccion")}
           {renderInput("Cantidad de Miembros", "cantidad_miembros", "numeric")}
-          {renderInput("Zona", "zona", "numeric")}
+          {renderPicker("Zona", "zona", [1,2,3,4,5,6].map(z => ({label: `Zona ${z}`, value: z})))}
           {renderInput("Fecha Fundación (AAAA-MM-DD)", "fecha_fundacion")}
           <View style={styles.infraBox}>
             <Text style={styles.infraTitle}>Infraestructura y Estatus</Text>
@@ -146,11 +207,73 @@ export default function EditScreen({ route, navigation }) {
 
       {path === "hijos" && (
         <>
-          {renderInput("ID Pastor Padre", "id_pastor", "numeric")}
+          {renderPicker("Pastor Padre", "id_pastor", pastoresList.map(p => ({label: `${p.nombre} ${p.apellido}`, value: p.id_pastor})))}
           {renderInput("Nombre", "nombre")}
           {renderInput("Apellido", "apellido")}
-          {renderInput("Sexo (M o F)", "sexo")}
+          {renderPicker("Sexo", "sexo", [{label: "Masculino", value: "M"}, {label: "Femenino", value: "F"}])}
           {renderInput("Edad", "edad", "numeric")}
+        </>
+      )}
+
+      {path === "reporte" && (
+        <>
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>General</Text>
+          </View>
+          {renderPicker("Pastor", "id_pastor", pastoresList.map(p => ({label: `${p.nombre} ${p.apellido}`, value: p.id_pastor})))}
+          {renderPicker("Iglesia", "id_iglesia", iglesiasList.map(ig => ({label: ig.nombre_iglesia, value: ig.id_iglesia})))}
+          {renderPicker("Mes", "mes_reportado", [
+            "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", 
+            "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
+          ].map(m => ({label: m, value: m})))}
+          {renderInput("Año", "anio_reportado", "numeric")}
+
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>Finanzas en Bolívares (BS)</Text>
+          </View>
+          {renderInput("Diezmos BS", "diezmos_bs", "numeric")}
+          {renderInput("Poder del Uno BS", "poder_del_uno_bs", "numeric")}
+          {renderInput("Única Sectorial BS", "unica_sectorial_bs", "numeric")}
+          {renderInput("Campamento BS", "campamento_bs", "numeric")}
+          {renderInput("Convención BS", "convencion_bs", "numeric")}
+          
+          <View style={styles.row}>
+            <View style={{flex: 1, marginRight: 5}}>
+              {renderInput("Otro Nombre 1", "ofrenda_1_nombre")}
+            </View>
+            <View style={{flex: 1}}>
+              {renderInput("Monto BS 1", "ofrenda_1_bs", "numeric")}
+            </View>
+          </View>
+
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>Finanzas en Dólares (USD)</Text>
+          </View>
+          {renderInput("Diezmos USD", "diezmos_usd", "numeric")}
+          {renderInput("Poder del Uno USD", "poder_del_uno_usd", "numeric")}
+          {renderInput("Única Sectorial USD", "unica_sectorial_usd", "numeric")}
+          {renderInput("Campamento USD", "campamento_usd", "numeric")}
+          {renderInput("Convención USD", "convencion_usd", "numeric")}
+
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>Finanzas en Pesos (COP)</Text>
+          </View>
+          {renderInput("Diezmos COP", "diezmos_cop", "numeric")}
+          {renderInput("Poder del Uno COP", "poder_del_uno_cop", "numeric")}
+          {renderInput("Única Sectorial COP", "unica_sectorial_cop", "numeric")}
+
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>Información de Pago</Text>
+          </View>
+          {renderPicker("Tipo de Pago", "tipo_pago", [
+            {label: "Efectivo", value: "Efectivo"},
+            {label: "Pago Móvil", value: "Pago Movil"},
+            {label: "Transferencia", value: "Transferencia"}
+          ])}
+          {renderInput("Banco Destino", "banco_destino")}
+          {renderInput("Fecha de Pago (AAAA-MM-DD)", "fecha_pago")}
+          {renderInput("Referencia", "referencia")}
+          {renderInput("Observaciones", "observaciones")}
         </>
       )}
 
@@ -163,26 +286,48 @@ export default function EditScreen({ route, navigation }) {
         </>
       )}
 
-      <TouchableOpacity
-        style={styles.btnSave}
-        onPress={handleSave}
-        disabled={loading}
-      >
-        <Text style={styles.btnSaveText}>
-          {loading ? "Guardando..." : "Guardar Cambios"}
-        </Text>
-      </TouchableOpacity>
+      <View style={{ marginTop: 20, marginBottom: 40 }}>
+        <Animated.View style={{ transform: [{ scale: scaleAnimSave }] }}>
+          <TouchableOpacity
+            style={styles.btnSave}
+            onPress={handleSave}
+            disabled={loading}
+            onPressIn={() => animateButton(scaleAnimSave, 0.95)}
+            onPressOut={() => animateButton(scaleAnimSave, 1)}
+            activeOpacity={1}
+          >
+            <Text style={styles.btnSaveText}>
+              {loading ? "Guardando..." : "GUARDAR CAMBIOS"}
+            </Text>
+          </TouchableOpacity>
+        </Animated.View>
+
+        <Animated.View style={{ transform: [{ scale: scaleAnimCancel }] }}>
+          <TouchableOpacity
+            style={styles.btnCancel}
+            onPress={() => navigation.goBack()}
+            onPressIn={() => animateButton(scaleAnimCancel, 0.95)}
+            onPressOut={() => animateButton(scaleAnimCancel, 1)}
+            activeOpacity={1}
+          >
+            <Text style={styles.btnCancelText}>CANCELAR REGISTRO</Text>
+          </TouchableOpacity>
+        </Animated.View>
+      </View>
     </ScrollView>
+      </Animated.View>
+    </LinearGradient>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#F8F9FA", padding: 20 },
+  container: { flex: 1, padding: 20 },
   headerTitle: {
-    fontSize: 22,
+    fontSize: 26,
     fontWeight: "bold",
-    color: "#1A237E",
-    marginBottom: 20,
+    color: "#FFF",
+    marginBottom: 25,
+    textAlign: "center",
   },
   inputGroup: { marginBottom: 15 },
   label: { fontSize: 14, fontWeight: "bold", color: "#555", marginBottom: 5 },
@@ -192,6 +337,16 @@ const styles = StyleSheet.create({
     borderColor: "#DDD",
     padding: 12,
     borderRadius: 8,
+  },
+  pickerContainer: {
+    backgroundColor: "#FFF",
+    borderWidth: 1,
+    borderColor: "#DDD",
+    borderRadius: 8,
+    overflow: "hidden",
+  },
+  picker: {
+    height: 50,
   },
   infraBox: {
     backgroundColor: "#E8EAF6",
@@ -212,12 +367,33 @@ const styles = StyleSheet.create({
   checked: { backgroundColor: "#1A237E" },
   switchLabel: { fontSize: 15, color: "#333" },
   btnSave: {
-    backgroundColor: "#1A237E",
-    padding: 15,
-    borderRadius: 10,
+    backgroundColor: "#2E7D32", // Verde éxito
+    padding: 16,
+    borderRadius: 12,
     alignItems: "center",
-    marginTop: 20,
-    marginBottom: 40,
+    elevation: 4,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
   },
-  btnSaveText: { color: "#FFF", fontWeight: "bold", fontSize: 16 },
+  btnSaveText: { color: "#FFF", fontWeight: "bold", fontSize: 16, letterSpacing: 1 },
+  btnCancel: {
+    marginTop: 15,
+    padding: 16,
+    borderRadius: 12,
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: "#C62828", // Rojo cancelar
+  },
+  btnCancelText: { color: "#C62828", fontWeight: "bold", fontSize: 14 },
+  sectionHeader: {
+    backgroundColor: "#D4AF37", // Oro
+    padding: 10,
+    borderRadius: 8,
+    marginTop: 25,
+    marginBottom: 12,
+  },
+  sectionTitle: { color: "#FFF", fontWeight: "bold", fontSize: 13, textTransform: "uppercase", letterSpacing: 1.5 },
+  row: { flexDirection: "row", justifyContent: "space-between" },
 });

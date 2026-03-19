@@ -1,8 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { 
   View, Text, ActivityIndicator, FlatList, StyleSheet, 
-  TouchableOpacity, SafeAreaView, RefreshControl, TextInput 
+  TouchableOpacity, SafeAreaView, RefreshControl, TextInput,
+  Animated
 } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import config from '../config';
 import Header from '../components/common/Header';
 import SearchBar from '../components/common/SearchBar';
@@ -14,11 +16,21 @@ import HijoListItem from '../components/listItems/HijoListItem';
 
 export default function ListScreen({ route, navigation }) {
   const { path, title } = route.params;
-  const [data, setData] = useState([]);
-  const [filteredData, setFilteredData] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [refreshing, setRefreshing] = useState(false);
-  const [searchText, setSearchText] = useState('');
+  const [data, setData] = React.useState([]);
+  const [filteredData, setFilteredData] = React.useState([]);
+  const [loading, setLoading] = React.useState(true);
+  const [refreshing, setRefreshing] = React.useState(false);
+  const [searchText, setSearchText] = React.useState('');
+  const fadeAnim = React.useRef(new Animated.Value(0)).current;
+
+  React.useEffect(() => {
+    fadeAnim.setValue(0);
+    Animated.timing(fadeAnim, {
+      toValue: 1,
+      duration: 400,
+      useNativeDriver: true,
+    }).start();
+  }, [path]);
 
   const fetchData = async () => {
     setLoading(true);
@@ -98,21 +110,23 @@ export default function ListScreen({ route, navigation }) {
   };
 
   return (
-    <View style={styles.container}>
+    <LinearGradient colors={['#1A237E', '#3949AB']} style={styles.container}>
       <Header title={title} onAddPress={() => navigation.navigate('Edit', { path, item: {}, origin: 'List' })} />
       <SearchBar value={searchText} onChangeText={handleSearch} />
-      {loading && !refreshing ? (
-        <ActivityIndicator size="large" color="#1A237E" style={{ marginTop: 20 }} />
-      ) : (
-        <FlatList
-          data={filteredData}
-          keyExtractor={(item, index) => index.toString()}
-          renderItem={renderItem}
-          contentContainerStyle={{ padding: 15 }}
-          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
-        />
-      )}
-    </View>
+      <Animated.View style={{ flex: 1, opacity: fadeAnim }}>
+        {loading && !refreshing ? (
+          <ActivityIndicator size="large" color="#FFD700" style={{ marginTop: 20 }} />
+        ) : (
+          <FlatList
+            data={filteredData}
+            keyExtractor={(item, index) => index.toString()}
+            renderItem={renderItem}
+            contentContainerStyle={{ padding: 15, paddingBottom: 50 }}
+            refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#FFF" />}
+          />
+        )}
+      </Animated.View>
+    </LinearGradient>
   );
 }
 
