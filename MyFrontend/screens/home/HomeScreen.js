@@ -1,14 +1,14 @@
-import React from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView, SafeAreaView, Image, Animated } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import config from '../../config';
 
 const MenuButton = ({ title, onPress, subtitle, color = '#1A237E', index = 0 }) => {
-  const scaleAnim = React.useRef(new Animated.Value(1)).current;
-  const fadeAnim = React.useRef(new Animated.Value(0)).current;
-  const slideAnim = React.useRef(new Animated.Value(30)).current;
+  const scaleAnim = useRef(new Animated.Value(1)).current;
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+  const slideAnim = useRef(new Animated.Value(30)).current;
 
-  React.useEffect(() => {
+  useEffect(() => {
     Animated.parallel([
       Animated.timing(fadeAnim, {
         toValue: 1,
@@ -55,11 +55,11 @@ const MenuButton = ({ title, onPress, subtitle, color = '#1A237E', index = 0 }) 
 };
 
 export default function HomeScreen({ navigation }) {
-  const [pathInfo, setPathInfo] = React.useState(null);
-  const [loading, setLoading] = React.useState(true);
-  const [error, setError] = React.useState(null);
+  const [pathInfo, setPathInfo] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  React.useEffect(() => {
+  useEffect(() => {
     fetch(`${config.API_URL}/path/`)
       .then(res => res.json())
       .then(json => setPathInfo(json))

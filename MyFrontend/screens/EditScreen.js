@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
   View,
   Text,
@@ -16,10 +16,10 @@ import config from "../config";
 
 export default function EditScreen({ route, navigation }) {
   const { path, item } = route.params;
-  const [formData, setFormData] = React.useState(item || {});
-  const fadeAnim = React.useRef(new Animated.Value(0)).current;
-  const scaleAnimSave = React.useRef(new Animated.Value(1)).current;
-  const scaleAnimCancel = React.useRef(new Animated.Value(1)).current;
+  const [formData, setFormData] = useState(item || {});
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+  const scaleAnimSave = useRef(new Animated.Value(1)).current;
+  const scaleAnimCancel = useRef(new Animated.Value(1)).current;
 
   const animateButton = (anim, toValue) => {
     Animated.spring(anim, {
@@ -29,18 +29,18 @@ export default function EditScreen({ route, navigation }) {
     }).start();
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     Animated.timing(fadeAnim, {
       toValue: 1,
       duration: 500,
       useNativeDriver: true,
     }).start();
   }, []);
-  const [loading, setLoading] = React.useState(false);
-  const [iglesiasList, setIglesiasList] = React.useState([]);
-  const [pastoresList, setPastoresList] = React.useState([]);
+  const [loading, setLoading] = useState(false);
+  const [iglesiasList, setIglesiasList] = useState([]);
+  const [pastoresList, setPastoresList] = useState([]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     // Carga de Iglesias
     if (["pastores", "iglesias", "hijos", "reporte"].includes(path)) {
       fetch(`${config.API_URL}/iglesias/`)

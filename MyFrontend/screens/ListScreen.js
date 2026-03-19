@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { 
   View, Text, ActivityIndicator, FlatList, StyleSheet, 
   TouchableOpacity, SafeAreaView, RefreshControl, TextInput,
@@ -16,14 +16,14 @@ import HijoListItem from '../components/listItems/HijoListItem';
 
 export default function ListScreen({ route, navigation }) {
   const { path, title } = route.params;
-  const [data, setData] = React.useState([]);
-  const [filteredData, setFilteredData] = React.useState([]);
-  const [loading, setLoading] = React.useState(true);
-  const [refreshing, setRefreshing] = React.useState(false);
-  const [searchText, setSearchText] = React.useState('');
-  const fadeAnim = React.useRef(new Animated.Value(0)).current;
+  const [data, setData] = useState([]);
+  const [filteredData, setFilteredData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+  const [searchText, setSearchText] = useState('');
+  const fadeAnim = useRef(new Animated.Value(0)).current;
 
-  React.useEffect(() => {
+  useEffect(() => {
     fadeAnim.setValue(0);
     Animated.timing(fadeAnim, {
       toValue: 1,

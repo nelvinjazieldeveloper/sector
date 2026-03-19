@@ -1,12 +1,12 @@
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
 import { View, Text, ScrollView, StyleSheet, SafeAreaView, TouchableOpacity, Animated } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 
 export default function ReportDetailScreen({ route, navigation }) {
   const { item } = route.params;
-  const fadeAnim = React.useRef(new Animated.Value(0)).current;
+  const fadeAnim = useRef(new Animated.Value(0)).current;
 
-  React.useEffect(() => {
+  useEffect(() => {
     Animated.timing(fadeAnim, {
       toValue: 1,
       duration: 500,
