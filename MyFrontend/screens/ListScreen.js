@@ -98,7 +98,7 @@ export default function ListScreen({ route, navigation }) {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <Header title={title} onAddPress={() => navigation.navigate('Edit', { path, item: {}, origin: 'List' })} />
       <SearchBar value={searchText} onChangeText={handleSearch} />
       {loading && !refreshing ? (
@@ -112,7 +112,7 @@ export default function ListScreen({ route, navigation }) {
           refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
         />
       )}
-    </SafeAreaView>
+    </View>
   );
 }
 

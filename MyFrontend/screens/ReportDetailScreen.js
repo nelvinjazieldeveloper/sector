@@ -15,10 +15,15 @@ export default function ReportDetailScreen({ route, navigation }) {
   );
 
   return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scroll}>
-        
-        {/* ENCABEZADO PRINCIPAL */}
+    <ScrollView 
+      style={{ flex: 1, backgroundColor: '#F0F2F5' }} 
+      contentContainerStyle={[{ flexGrow: 1 }, styles.scroll]}
+      showsVerticalScrollIndicator={true}
+      nestedScrollEnabled={true}
+      scrollEnabled={true}
+      keyboardShouldPersistTaps="handled"
+    >
+      {/* ENCABEZADO PRINCIPAL */}
         <View style={styles.headerCard}>
           <Text style={styles.churchTitle}>⛪ {item.iglesia_nombre}</Text>
           <Text style={styles.pastorSub}>Pastor: {item.pastor_nombre}</Text>
@@ -77,9 +82,7 @@ export default function ReportDetailScreen({ route, navigation }) {
         >
           <Text style={styles.editBtnText}>MODIFICAR REPORTE</Text>
         </TouchableOpacity>
-
-      </ScrollView>
-    </SafeAreaView>
+    </ScrollView>
   );
 }
 

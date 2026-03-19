@@ -26,9 +26,15 @@ export default function HomeScreen({ navigation }) {
   }, []);
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: '#F8F9FA' }}>
-      <ScrollView contentContainerStyle={styles.container}>
-        <View style={styles.header}>
+    <ScrollView 
+      style={{ flex: 1, backgroundColor: '#F8F9FA' }} 
+      contentContainerStyle={[{ flexGrow: 1 }, styles.container]}
+      showsVerticalScrollIndicator={true}
+      nestedScrollEnabled={true}
+      scrollEnabled={true}
+      keyboardShouldPersistTaps="handled"
+    >
+      <View style={styles.header}>
           <Text style={styles.welcome}>Bienvenido,</Text>
           <Text style={styles.title}>Sector Nor Occidente 1</Text>
         </View>
@@ -42,8 +48,7 @@ export default function HomeScreen({ navigation }) {
           <MenuButton title="Reportes" subtitle="Finanzas y estadísticas" onPress={() => navigation.navigate('Reportes', { path: 'reporte', title: 'Reportes' })} />
           <MenuButton title="Reuniones" subtitle="Agenda sectorial" onPress={() => navigation.navigate('Reuniones', { path: 'reuniones', title: 'Reuniones' })} />
         </View>
-      </ScrollView>
-    </SafeAreaView>
+    </ScrollView>
   );
 }
 

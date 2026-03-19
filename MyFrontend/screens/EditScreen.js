@@ -4,6 +4,7 @@ import {
   Text,
   TextInput,
   ScrollView,
+  SafeAreaView,
   StyleSheet,
   TouchableOpacity,
   Alert,
@@ -96,7 +97,14 @@ export default function EditScreen({ route, navigation }) {
   );
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView 
+      style={{ flex: 1, backgroundColor: "#F8F9FA" }} 
+      contentContainerStyle={{ flexGrow: 1, padding: 20, paddingBottom: 100 }}
+      showsVerticalScrollIndicator={true}
+      nestedScrollEnabled={true}
+      scrollEnabled={true}
+      keyboardShouldPersistTaps="handled"
+    >
       <Text style={styles.headerTitle}>
         {item.id ? "Editar" : "Nuevo"} Registro
       </Text>
@@ -106,7 +114,17 @@ export default function EditScreen({ route, navigation }) {
           {renderInput("Nombre", "nombre")}
           {renderInput("Apellido", "apellido")}
           {renderInput("Cédula", "cedula", "numeric")}
-          {renderInput("Zona", "zona")}
+          {renderInput("Edad", "edad", "numeric")}
+          {renderInput("Esposa", "esposa")}
+          {renderInput("Cantidad de Hijos", "hijos", "numeric")}
+          {renderInput("Años de Ministerio", "anos_ministerio", "numeric")}
+          {renderInput("Tipo Licencia", "tipo_licencia")}
+          {renderInput("Cargo", "cargo")}
+          {renderInput("ID de Iglesia", "id_iglesia", "numeric")}
+          {renderInput("Zona", "zona", "numeric")}
+          <View style={styles.infraBox}>
+            {renderSwitch("Pastor Activo", "estatus_activo")}
+          </View>
         </>
       )}
 
@@ -115,12 +133,24 @@ export default function EditScreen({ route, navigation }) {
           {renderInput("Nombre de la Iglesia", "nombre_iglesia")}
           {renderInput("Dirección", "direccion")}
           {renderInput("Cantidad de Miembros", "cantidad_miembros", "numeric")}
-          {renderInput("Zona", "zona")}
+          {renderInput("Zona", "zona", "numeric")}
+          {renderInput("Fecha Fundación (AAAA-MM-DD)", "fecha_fundacion")}
           <View style={styles.infraBox}>
-            <Text style={styles.infraTitle}>Infraestructura Propia</Text>
+            <Text style={styles.infraTitle}>Infraestructura y Estatus</Text>
             {renderSwitch("¿Tiene Terreno Propio?", "tiene_terreno")}
             {renderSwitch("¿Tiene Casa Pastoral?", "tiene_casa_pastoral")}
+            {renderSwitch("Iglesia Activa", "estatus_activo")}
           </View>
+        </>
+      )}
+
+      {path === "hijos" && (
+        <>
+          {renderInput("ID Pastor Padre", "id_pastor", "numeric")}
+          {renderInput("Nombre", "nombre")}
+          {renderInput("Apellido", "apellido")}
+          {renderInput("Sexo (M o F)", "sexo")}
+          {renderInput("Edad", "edad", "numeric")}
         </>
       )}
 

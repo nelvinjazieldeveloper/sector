@@ -1,7 +1,7 @@
 // central configuration file for the front end
 // you can import the values anywhere in the app
 
-const API_URL = 'http://localhost/sector'; // TODO: replace with real API url
+const API_URL = 'http://192.168.101.5/sector'; // Reemplazado automáticamente con IP local para Expo Go
 
 // also expose on the global object if you prefer shorthand access
 if (typeof global !== 'undefined') {

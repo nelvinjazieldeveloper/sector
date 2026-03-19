@@ -48,16 +48,18 @@ switch ($method) {
             echo json_encode(["error" => "No se recibieron datos"]);
             break;
         }
-        $sql = "INSERT INTO iglesias (nombre_iglesia, direccion, cantidad_miembros, zona, tiene_terreno, tiene_casa_pastoral) 
-                VALUES (?, ?, ?, ?, ?, ?)";
+        $sql = "INSERT INTO iglesias (nombre_iglesia, direccion, cantidad_miembros, zona, tiene_terreno, tiene_casa_pastoral, fecha_fundacion, estatus_activo) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         $stmt = $database->prepare($sql);
         $stmt->execute([
-            $input['nombre_iglesia'], 
-            $input['direccion'], 
-            $input['cantidad_miembros'], 
-            $input['zona'],
+            $input['nombre_iglesia'] ?? null, 
+            $input['direccion'] ?? null, 
+            $input['cantidad_miembros'] ?? 0, 
+            $input['zona'] ?? null,
             $input['tiene_terreno'] ?? 0,
-            $input['tiene_casa_pastoral'] ?? 0
+            $input['tiene_casa_pastoral'] ?? 0,
+            $input['fecha_fundacion'] ?? null,
+            $input['estatus_activo'] ?? 1
         ]);
         echo json_encode(["message" => "Iglesia registrada con éxito", "id" => $database->lastInsertId()]);
         break;
@@ -69,16 +71,18 @@ switch ($method) {
             echo json_encode(["error" => "ID y datos requeridos"]);
             break;
         }
-        $sql = "UPDATE iglesias SET nombre_iglesia=?, direccion=?, cantidad_miembros=?, zona=?, tiene_terreno=?, tiene_casa_pastoral=? 
+        $sql = "UPDATE iglesias SET nombre_iglesia=?, direccion=?, cantidad_miembros=?, zona=?, tiene_terreno=?, tiene_casa_pastoral=?, fecha_fundacion=?, estatus_activo=? 
                 WHERE id_iglesia=?";
         $stmt = $database->prepare($sql);
         $stmt->execute([
-            $input['nombre_iglesia'], 
-            $input['direccion'], 
-            $input['cantidad_miembros'], 
-            $input['zona'], 
+            $input['nombre_iglesia'] ?? null, 
+            $input['direccion'] ?? null, 
+            $input['cantidad_miembros'] ?? 0, 
+            $input['zona'] ?? null, 
             $input['tiene_terreno'] ?? 0,
             $input['tiene_casa_pastoral'] ?? 0,
+            $input['fecha_fundacion'] ?? null,
+            $input['estatus_activo'] ?? 1,
             $_GET['id']
         ]);
         echo json_encode(["message" => "Datos de la iglesia actualizados"]);

@@ -43,14 +43,14 @@ switch ($method) {
             break;
         }
         try {
-            $sql = "INSERT INTO pastores (nombre, apellido, cedula, edad, esposa, hijos, anos_ministerio, tipo_licencia, cargo, id_iglesia, zona) 
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            $sql = "INSERT INTO pastores (nombre, apellido, cedula, edad, esposa, hijos, anos_ministerio, tipo_licencia, cargo, id_iglesia, zona, estatus_activo) 
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             $stmt = $database->prepare($sql);
             $stmt->execute([
-                $input['nombre'], $input['apellido'], $input['cedula'], 
+                $input['nombre'] ?? null, $input['apellido'] ?? null, $input['cedula'] ?? null, 
                 $input['edad'] ?? null, $input['esposa'] ?? null, $input['hijos'] ?? 0, 
-                $input['anos_ministerio'] ?? null, $input['tipo_licencia'], 
-                $input['cargo'], $input['id_iglesia'], $input['zona']
+                $input['anos_ministerio'] ?? null, $input['tipo_licencia'] ?? null, 
+                $input['cargo'] ?? null, $input['id_iglesia'] ?? null, $input['zona'] ?? null, $input['estatus_activo'] ?? 1
             ]);
             echo json_encode(["message" => "Creado con éxito", "id" => $database->lastInsertId()]);
         } catch (PDOException $e) {
@@ -73,14 +73,14 @@ switch ($method) {
         try {
             // NOTA: Se excluye la cédula del UPDATE para evitar errores de duplicidad
             $sql = "UPDATE pastores SET nombre=?, apellido=?, edad=?, esposa=?, hijos=?, 
-                    anos_ministerio=?, tipo_licencia=?, cargo=?, id_iglesia=?, zona=? 
+                    anos_ministerio=?, tipo_licencia=?, cargo=?, id_iglesia=?, zona=?, estatus_activo=? 
                     WHERE id_pastor=?";
             $stmt = $database->prepare($sql);
             $stmt->execute([
-                $input['nombre'], $input['apellido'], $input['edad'] ?? null, 
+                $input['nombre'] ?? null, $input['apellido'] ?? null, $input['edad'] ?? null, 
                 $input['esposa'] ?? null, $input['hijos'] ?? 0, $input['anos_ministerio'] ?? null, 
-                $input['tipo_licencia'], $input['cargo'], $input['id_iglesia'], 
-                $input['zona'], $_GET['id']
+                $input['tipo_licencia'] ?? null, $input['cargo'] ?? null, $input['id_iglesia'] ?? null, 
+                $input['zona'] ?? null, $input['estatus_activo'] ?? 1, $_GET['id']
             ]);
             echo json_encode(["message" => "Actualizado con éxito"]);
         } catch (PDOException $e) {
