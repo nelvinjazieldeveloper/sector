@@ -32,6 +32,14 @@ switch ($method) {
             $stmt = $database->prepare($sql);
             $stmt->execute([$_GET['cedula']]);
             $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        } elseif (!empty($_GET['id_pastor'])) {
+            $sql = "SELECT p.*, i.nombre_iglesia 
+                    FROM pastores p
+                    LEFT JOIN iglesias i ON p.id_iglesia = i.id_iglesia 
+                    WHERE p.id_pastor = ?";
+            $stmt = $database->prepare($sql);
+            $stmt->execute([$_GET['id_pastor']]);
+            $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
         } else {
             $sql = "SELECT p.*, i.nombre_iglesia 
                     FROM pastores p
@@ -51,6 +59,9 @@ switch ($method) {
             break;
         }
         try {
+            $database->beginTransaction();
+            
+            // 1. Insertar el pastor
             $sql = "INSERT INTO pastores (nombre, apellido, cedula, edad, esposa, hijos, anos_ministerio, tipo_licencia, cargo, id_iglesia, zona, estatus_activo) 
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             $stmt = $database->prepare($sql);
@@ -60,11 +71,28 @@ switch ($method) {
                 $input['anos_ministerio'] ?? null, $input['tipo_licencia'] ?? null, 
                 $input['cargo'] ?? null, $input['id_iglesia'] ?? null, $input['zona'] ?? null, $input['estatus_activo'] ?? 1
             ]);
-            echo json_encode(["message" => "Creado con éxito", "id" => $database->lastInsertId()]);
+            
+            $id_pastor = $database->lastInsertId();
+            
+            // 2. Crear automáticamente el usuario
+            if (isset($input['cedula'])) {
+                $username = $input['cedula'];
+                $password = password_hash($username, PASSWORD_DEFAULT);
+                $rol = 'Pastor';
+                
+                $sql_user = "INSERT INTO usuarios (username, password, rol, id_pastor) VALUES (?, ?, ?, ?)";
+                $stmt_user = $database->prepare($sql_user);
+                $stmt_user->execute([$username, $password, $rol, $id_pastor]);
+            }
+            
+            $database->commit();
+            echo json_encode(["message" => "Pastor y usuario creados con éxito", "id" => $id_pastor]);
+            
         } catch (PDOException $e) {
+            $database->rollBack();
             if ($e->getCode() == 23000) {
                 http_response_code(409);
-                echo json_encode(["error" => "La cédula ya existe"]);
+                echo json_encode(["error" => "La cédula ya existe (o el usuario ya existe)"]);
             } else {
                 http_response_code(500);
                 echo json_encode(["error" => $e->getMessage()]);

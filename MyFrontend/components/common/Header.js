@@ -1,13 +1,15 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 
-const Header = ({ title, onAddPress }) => {
+const Header = ({ title, onAddPress, hideAdd = false }) => {
   return (
     <View style={styles.header}>
       <Text style={styles.title}>{title}</Text>
-      <TouchableOpacity style={styles.btnAdd} onPress={onAddPress}>
-        <Text style={styles.btnAddText}>+ Nuevo</Text>
-      </TouchableOpacity>
+      {!hideAdd && (
+        <TouchableOpacity style={styles.btnAdd} onPress={onAddPress}>
+          <Text style={styles.btnAddText}>+ Nuevo</Text>
+        </TouchableOpacity>
+      )}
     </View>
   );
 };

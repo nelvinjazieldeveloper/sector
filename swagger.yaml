@@ -18,8 +18,49 @@ tags:
     description: Gestión de reportes mensuales de diezmos y ofrendas
   - name: Asistencias
     description: Gestión detallada de asistencias
+  - name: usuarios
 
 paths:
+  /usuarios/login:
+    post:
+      tags:
+        - usuarios
+      summary: Iniciar sesión
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '200':
+          description: Login exitoso
+        '401':
+          description: Credenciales inválidas
+  /usuarios:
+    get:
+      tags:
+        - usuarios
+      summary: Listar todos los usuarios
+      responses:
+        '200':
+          description: Lista de usuarios
+    post:
+      tags:
+        - usuarios
+      summary: Crear nuevo usuario
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Usuario'
+      responses:
+        '201':
+          description: Usuario creado
   /path:
     get:
       summary: Ejemplo de endpoint simple
@@ -694,6 +735,19 @@ components:
           type: integer
         zona:
           type: integer
+    Usuario:
+      type: object
+      properties:
+        id_usuario:
+          type: integer
+        username:
+          type: string
+        rol:
+          type: string
+          enum: [Admin, Presbitero, Tesorero, Secretario, Pastor]
+        id_pastor:
+          type: integer
+          nullable: true
     Iglesia:
       allOf:
         - type: object

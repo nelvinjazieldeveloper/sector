@@ -54,7 +54,7 @@ const MenuButton = ({ title, onPress, subtitle, color = '#1A237E', index = 0 }) 
   );
 };
 
-export default function HomeScreen({ navigation }) {
+export default function HomeScreen({ navigation, user }) {
   const [pathInfo, setPathInfo] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -66,6 +66,22 @@ export default function HomeScreen({ navigation }) {
       .catch(err => setError(err.message))
       .finally(() => setLoading(false));
   }, []);
+
+  const userRol = user?.rol?.toLowerCase();
+  const isAdmin = userRol === 'admin' || userRol === 'presbitero' || userRol === 'secretario';
+  const isTesorero = userRol === 'tesorero';
+  
+  // LOG PARA DEPURACIÓN (Verificar en consola de Expo si id_pastor existe)
+  // console.log("Session User:", userRol, user?.id_pastor);
+
+  const extraParams = !isAdmin && user?.id_pastor ? { id_pastor: user.id_pastor } : {};
+
+  // Forzar que el pastor vea sus propios datos siempre
+  useEffect(() => {
+    if (userRol === 'pastor' && !user?.id_pastor) {
+      console.warn("Advertencia: El usuario Pastor no tiene id_pastor vinculado.");
+    }
+  }, [user]);
 
   return (
     <LinearGradient
@@ -86,8 +102,8 @@ export default function HomeScreen({ navigation }) {
             <Image source={require('../../assets/logo.png')} style={styles.logo} />
           </View>
           <View>
-            <Text style={styles.welcome}>Bienvenido,</Text>
-            <Text style={styles.title}>Efecto Esdras</Text>
+            <Text style={styles.welcome}>Hola, {user?.nombre || user?.username}</Text>
+            <Text style={styles.title}>{user?.rol || 'Usuario'}</Text>
           </View>
         </View>
       </View>
@@ -95,40 +111,47 @@ export default function HomeScreen({ navigation }) {
         {error && <Text style={styles.errorText}>Error de conexión: {error}</Text>}
 
         <View style={styles.menuGrid}>
-          <MenuButton 
-            index={0}
-            title="Pastores" 
-            subtitle="Gestión ministerial" 
-            color="#2E7D32" 
-            onPress={() => navigation.navigate('Pastores', { path: 'pastores', title: 'Pastores' })} 
-          />
-          <MenuButton 
-            index={1}
-            title="Iglesias" 
-            subtitle="Sedes y membresía" 
-            color="#1A237E" 
-            onPress={() => navigation.navigate('Iglesias', { path: 'iglesias', title: 'Iglesias' })} 
-          />
-          <MenuButton 
-            index={2}
-            title="Hijos" 
-            subtitle="Registro familiar" 
-            color="#C62828" 
-            onPress={() => navigation.navigate('Hijos', { path: 'hijos', title: 'Hijos' })} 
-          />
+          {/* Módulos de Gestión (Solo si NO es tesorero) */}
+          {!isTesorero && (
+            <>
+              <MenuButton 
+                index={0}
+                title="Pastores" 
+                subtitle="Gestión ministerial" 
+                color="#2E7D32" 
+                onPress={() => navigation.navigate('Pastores', { path: 'pastores', title: 'Pastores', user_rol: user.rol, ...extraParams })} 
+              />
+              <MenuButton 
+                index={1}
+                title="Iglesias" 
+                subtitle="Sedes y membresía" 
+                color="#1A237E" 
+                onPress={() => navigation.navigate('Iglesias', { path: 'iglesias', title: 'Iglesias', user_rol: user.rol, ...extraParams })} 
+              />
+              <MenuButton 
+                index={2}
+                title="Hijos" 
+                subtitle="Registro familiar" 
+                color="#C62828" 
+                onPress={() => navigation.navigate('Hijos', { path: 'hijos', title: 'Hijos', user_rol: user.rol, ...extraParams })} 
+              />
+            </>
+          )}
+
+          {/* Módulos Operativos (Para todos) */}
           <MenuButton 
             index={3}
             title="Reportes" 
             subtitle="Finanzas y estadísticas" 
             color="#D4AF37" 
-            onPress={() => navigation.navigate('Reportes', { path: 'reporte', title: 'Reportes' })} 
+            onPress={() => navigation.navigate('Reportes', { path: 'reporte', title: 'Reportes', user_rol: user.rol, ...extraParams })} 
           />
           <MenuButton 
             index={4}
             title="Reuniones" 
             subtitle="Agenda sectorial" 
             color="#6A1B9A" 
-            onPress={() => navigation.navigate('Reuniones', { path: 'reuniones', title: 'Reuniones' })} 
+            onPress={() => navigation.navigate('Reuniones', { path: 'reuniones', title: 'Reuniones', user_rol: user.rol })} 
           />
         </View>
     </ScrollView>

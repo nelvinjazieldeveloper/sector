@@ -2,8 +2,10 @@ import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
-const ReunionListItem = ({ item, onPress }) => {
+const ReunionListItem = ({ item, onPress, user_rol }) => {
   const navigation = useNavigation();
+  const rol = user_rol?.toLowerCase();
+  const canManageAttendance = rol === 'admin' || rol === 'presbitero' || rol === 'secretario';
 
   return (
     <View style={[styles.card, { borderLeftColor: '#6A1B9A', borderLeftWidth: 5 }]}>
@@ -18,14 +20,16 @@ const ReunionListItem = ({ item, onPress }) => {
         </View>
       </TouchableOpacity>
       
-      <View style={styles.cardFooter}>
-        <TouchableOpacity 
-          style={styles.attendanceBtn} 
-          onPress={() => navigation.navigate('Attendance', { meeting: item })}
-        >
-          <Text style={styles.attendanceBtnText}>📋 PASAR ASISTENCIA</Text>
-        </TouchableOpacity>
-      </View>
+      {canManageAttendance && (
+        <View style={styles.cardFooter}>
+          <TouchableOpacity 
+            style={styles.attendanceBtn} 
+            onPress={() => navigation.navigate('Attendance', { meeting: item })}
+          >
+            <Text style={styles.attendanceBtnText}>📋 PASAR ASISTENCIA</Text>
+          </TouchableOpacity>
+        </View>
+      )}
     </View>
   );
 };

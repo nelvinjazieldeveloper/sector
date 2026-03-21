@@ -23,6 +23,16 @@ switch ($method) {
             $stmt = $pdo->prepare($sql);
             $stmt->execute([$id]);
             $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        } elseif (!empty($_GET['id_pastor'])) {
+            $sql = "SELECT r.*, CONCAT(p.nombre, ' ', p.apellido) AS pastor_nombre, i.nombre_iglesia AS iglesia_nombre
+                    FROM reportes_mensuales r
+                    INNER JOIN pastores p ON r.id_pastor = p.id_pastor
+                    INNER JOIN iglesias i ON r.id_iglesia = i.id_iglesia
+                    WHERE r.id_pastor = ?
+                    ORDER BY r.anio_reportado DESC, r.mes_reportado DESC";
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute([$_GET['id_pastor']]);
+            $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
         } else {
             $sql = "SELECT r.*, CONCAT(p.nombre, ' ', p.apellido) AS pastor_nombre, i.nombre_iglesia AS iglesia_nombre
                     FROM reportes_mensuales r

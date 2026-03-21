@@ -15,13 +15,17 @@ import ReunionListItem from '../components/listItems/ReunionListItem';
 import HijoListItem from '../components/listItems/HijoListItem';
 
 export default function ListScreen({ route, navigation }) {
-  const { path, title } = route.params;
+  const { path, title, id_pastor, user_rol } = route.params;
   const [data, setData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [searchText, setSearchText] = useState('');
   const fadeAnim = useRef(new Animated.Value(0)).current;
+
+  // Determinar si el usuario tiene permiso de añadir registros
+  const rol = user_rol?.toLowerCase();
+  const canAdd = rol === 'admin' || rol === 'presbitero' || rol === 'secretario';
 
   useEffect(() => {
     fadeAnim.setValue(0);
@@ -35,7 +39,12 @@ export default function ListScreen({ route, navigation }) {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const response = await fetch(`${config.API_URL}/${path}/`);
+      // Si el id_pastor viene en los params, lo añadimos a la URL
+      const url = id_pastor 
+        ? `${config.API_URL}/${path}/?id_pastor=${id_pastor}`
+        : `${config.API_URL}/${path}/`;
+        
+      const response = await fetch(url);
       const json = await response.json();
       const list = Array.isArray(json) ? json : [];
       setData(list);
@@ -89,7 +98,14 @@ export default function ListScreen({ route, navigation }) {
       if (path === 'reporte') {
         navigation.navigate('DetalleReporte', { item });
       } else {
-        navigation.navigate('Edit', { path, item, origin: 'List' });
+        // Solo permitir editar si canAdd es true (o una lógica específica de edición)
+        // Por ahora, si no puede añadir, asumimos que no debe editar registros generales
+        if (canAdd) {
+          navigation.navigate('Edit', { path, item, origin: 'List' });
+        } else {
+          // Para pastores, quizás solo ver? Por ahora bloqueamos edición general
+          Alert.alert("Acceso Restringido", "No tienes permisos para editar este registro.");
+        }
       }
     };
 
@@ -101,7 +117,7 @@ export default function ListScreen({ route, navigation }) {
       case 'reporte':
         return <ReporteListItem item={item} onPress={onPress} />;
       case 'reuniones':
-        return <ReunionListItem item={item} onPress={onPress} />;
+        return <ReunionListItem item={item} onPress={onPress} user_rol={rol} />;
       case 'hijos':
         return <HijoListItem item={item} onPress={onPress} />;
       default:
@@ -111,7 +127,11 @@ export default function ListScreen({ route, navigation }) {
 
   return (
     <LinearGradient colors={['#1A237E', '#3949AB']} style={styles.container}>
-      <Header title={title} onAddPress={() => navigation.navigate('Edit', { path, item: {}, origin: 'List' })} />
+      <Header 
+        title={title} 
+        onAddPress={() => navigation.navigate('Edit', { path, item: {}, origin: 'List' })} 
+        hideAdd={!canAdd}
+      />
       <SearchBar value={searchText} onChangeText={handleSearch} />
       <Animated.View style={{ flex: 1, opacity: fadeAnim }}>
         {loading && !refreshing ? (

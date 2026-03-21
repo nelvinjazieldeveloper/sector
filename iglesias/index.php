@@ -27,6 +27,12 @@ switch ($method) {
             $stmt = $database->prepare("SELECT * FROM iglesias WHERE id_iglesia = ?");
             $stmt->execute([$_GET['id']]);
             $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        } elseif (!empty($_GET['id_pastor'])) {
+            $stmt = $database->prepare("SELECT i.* FROM iglesias i 
+                                        JOIN pastores p ON i.id_iglesia = p.id_iglesia 
+                                        WHERE p.id_pastor = ?");
+            $stmt->execute([$_GET['id_pastor']]);
+            $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
         } else {
             // También podemos filtrar por zona si lo pasas por la URL: api_iglesias.php?zona=1
             if (isset($_GET['zona'])) {

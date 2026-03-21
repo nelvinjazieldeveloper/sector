@@ -245,6 +245,14 @@ ALTER TABLE `reuniones`
   ADD PRIMARY KEY (`id_reunion`);
 
 --
+-- Indices de la tabla `usuarios`
+--
+ALTER TABLE `usuarios`
+  ADD PRIMARY KEY (`id_usuario`),
+  ADD UNIQUE KEY `username` (`username`),
+  ADD KEY `id_pastor` (`id_pastor`);
+
+--
 -- AUTO_INCREMENT de las tablas volcadas
 --
 
@@ -285,6 +293,12 @@ ALTER TABLE `reuniones`
   MODIFY `id_reunion` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
+-- AUTO_INCREMENT de la tabla `usuarios`
+--
+ALTER TABLE `usuarios`
+  MODIFY `id_usuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
 -- Restricciones para tablas volcadas
 --
 
@@ -307,6 +321,12 @@ ALTER TABLE `asistencias`
 ALTER TABLE `reportes_mensuales`
   ADD CONSTRAINT `reportes_mensuales_ibfk_1` FOREIGN KEY (`id_pastor`) REFERENCES `pastores` (`id_pastor`) ON DELETE CASCADE,
   ADD CONSTRAINT `reportes_mensuales_ibfk_2` FOREIGN KEY (`id_iglesia`) REFERENCES `iglesias` (`id_iglesia`) ON DELETE CASCADE;
+
+--
+-- Filtros para la tabla `usuarios`
+--
+ALTER TABLE `usuarios`
+  ADD CONSTRAINT `usuarios_ibfk_1` FOREIGN KEY (`id_pastor`) REFERENCES `pastores` (`id_pastor`) ON DELETE SET NULL;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
