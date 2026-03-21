@@ -96,4 +96,22 @@ export default {
     { key: "sexo", type: "select", options: ["M", "F"], label: "Sexo" },
     { key: "edad", type: "numeric", label: "Edad" },
   ],
+  usuarios: [
+    { key: "username", label: "Usuario" },
+    { key: "password", label: "Contraseña (Nueva)", type: "password" },
+    { 
+      key: "rol", 
+      label: "Rol", 
+      type: "select", 
+      options: ["Admin", "Presbitero", "Secretario", "Tesorero", "Pastor"] 
+    },
+    {
+      key: "id_pastor",
+      type: "select",
+      endpoint: "pastores",
+      labelKey: "apellido",
+      valueKey: "id_pastor",
+      label: "Pastor Vinculado",
+    },
+  ],
 };

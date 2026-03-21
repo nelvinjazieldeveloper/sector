@@ -13,6 +13,7 @@ import IglesiaListItem from '../components/listItems/IglesiaListItem';
 import ReporteListItem from '../components/listItems/ReporteListItem';
 import ReunionListItem from '../components/listItems/ReunionListItem';
 import HijoListItem from '../components/listItems/HijoListItem';
+import UserListItem from '../components/listItems/UserListItem';
 
 export default function ListScreen({ route, navigation }) {
   const { path, title, id_pastor, user_rol } = route.params;
@@ -60,6 +61,12 @@ export default function ListScreen({ route, navigation }) {
   };
 
   useEffect(() => {
+    // Si intentan entrar a usuarios y NO son admin, los sacamos
+    if (path === 'usuarios' && rol !== 'admin') {
+      Alert.alert("Acceso Denegado", "Solo el administrador tiene acceso a este módulo.");
+      navigation.goBack();
+      return;
+    }
     fetchData();
   }, [path]);
 
@@ -101,7 +108,7 @@ export default function ListScreen({ route, navigation }) {
         // Solo permitir editar si canAdd es true (o una lógica específica de edición)
         // Por ahora, si no puede añadir, asumimos que no debe editar registros generales
         if (canAdd) {
-          navigation.navigate('Edit', { path, item, origin: 'List' });
+          navigation.navigate('Edit', { path, item, origin: 'List', user_rol: rol });
         } else {
           // Para pastores, quizás solo ver? Por ahora bloqueamos edición general
           Alert.alert("Acceso Restringido", "No tienes permisos para editar este registro.");
@@ -120,6 +127,8 @@ export default function ListScreen({ route, navigation }) {
         return <ReunionListItem item={item} onPress={onPress} user_rol={rol} />;
       case 'hijos':
         return <HijoListItem item={item} onPress={onPress} />;
+      case 'usuarios':
+        return <UserListItem item={item} onPress={onPress} />;
       default:
         return <PastorListItem item={item} onPress={onPress} />; // fallback
     }
@@ -129,7 +138,7 @@ export default function ListScreen({ route, navigation }) {
     <LinearGradient colors={['#1A237E', '#3949AB']} style={styles.container}>
       <Header 
         title={title} 
-        onAddPress={() => navigation.navigate('Edit', { path, item: {}, origin: 'List' })} 
+        onAddPress={() => navigation.navigate('Edit', { path, item: {}, origin: 'List', user_rol: rol })} 
         hideAdd={!canAdd}
       />
       <SearchBar value={searchText} onChangeText={handleSearch} />

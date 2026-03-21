@@ -26,19 +26,32 @@ switch ($method) {
             echo json_encode(["error" => "Datos incompletos"]);
             break;
         }
-        $pass = password_hash($data['password'], PASSWORD_DEFAULT);
+
+        $conn->beginTransaction();
         try {
+            $rol = $data['rol'];
+            $special_roles = ['Presbitero', 'Secretario', 'Tesorero'];
+            
+            if (in_array($rol, $special_roles)) {
+                // Si es un rol especial, quitamos ese rol a cualquier otro que lo tenga
+                $conn->prepare("UPDATE usuarios SET rol = 'Pastor' WHERE rol = ?")->execute([$rol]);
+            }
+
+            $pass = password_hash($data['password'], PASSWORD_DEFAULT);
             $stmt = $conn->prepare("INSERT INTO usuarios (username, password, rol, id_pastor) VALUES (?, ?, ?, ?)");
             $stmt->execute([
                 $data['username'], 
                 $pass, 
-                $data['rol'], 
+                $rol, 
                 $data['id_pastor'] ?? null
             ]);
-            echo json_encode(["message" => "Usuario creado", "id" => $conn->lastInsertId()]);
+            $newId = $conn->lastInsertId();
+            $conn->commit();
+            echo json_encode(["message" => "Usuario creado", "id" => $newId]);
         } catch (Exception $e) {
+            $conn->rollBack();
             http_response_code(400);
-            echo json_encode(["error" => "El usuario ya existe o error en DB"]);
+            echo json_encode(["error" => "El usuario ya existe o error en DB: " . $e->getMessage()]);
         }
         break;
 
@@ -46,20 +59,38 @@ switch ($method) {
         $id = $_GET['id'];
         $data = json_decode(file_get_contents("php://input"), true);
         
-        $sql = "UPDATE usuarios SET rol = ?, id_pastor = ?";
-        $params = [$data['rol'], $data['id_pastor'] ?? null];
-        
-        if (!empty($data['password'])) {
-            $sql .= ", password = ?";
-            $params[] = password_hash($data['password'], PASSWORD_DEFAULT);
+        $conn->beginTransaction();
+        try {
+            $rol = $data['rol'] ?? null;
+            $special_roles = ['Presbitero', 'Secretario', 'Tesorero'];
+
+            if ($rol && in_array($rol, $special_roles)) {
+                // Si estamos asignando un rol especial, otros que lo tengan vuelven a ser 'Pastor'
+                // Excepto el usuario que estamos editando actualmente
+                $stmt = $conn->prepare("UPDATE usuarios SET rol = 'Pastor' WHERE rol = ? AND id_usuario != ?");
+                $stmt->execute([$rol, $id]);
+            }
+
+            $sql = "UPDATE usuarios SET rol = ?, id_pastor = ?";
+            $params = [$data['rol'], $data['id_pastor'] ?? null];
+            
+            if (!empty($data['password'])) {
+                $sql .= ", password = ?";
+                $params[] = password_hash($data['password'], PASSWORD_DEFAULT);
+            }
+            
+            $sql .= " WHERE id_usuario = ?";
+            $params[] = $id;
+            
+            $stmt = $conn->prepare($sql);
+            $stmt->execute($params);
+            $conn->commit();
+            echo json_encode(["message" => "Usuario actualizado"]);
+        } catch (Exception $e) {
+            $conn->rollBack();
+            http_response_code(400);
+            echo json_encode(["error" => "Error al actualizar usuario: " . $e->getMessage()]);
         }
-        
-        $sql .= " WHERE id_usuario = ?";
-        $params[] = $id;
-        
-        $stmt = $conn->prepare($sql);
-        $stmt->execute($params);
-        echo json_encode(["message" => "Usuario actualizado"]);
         break;
 
     case 'DELETE':

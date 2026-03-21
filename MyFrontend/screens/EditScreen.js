@@ -42,6 +42,14 @@ export default function EditScreen({ route, navigation }) {
   const [pastoresList, setPastoresList] = useState([]);
 
   useEffect(() => {
+    // Seguridad: Solo admin puede entrar a usuarios
+    const { user_rol } = route.params;
+    if (path === 'usuarios' && user_rol?.toLowerCase() !== 'admin') {
+      Alert.alert("Acceso Denegado", "No tienes permisos para gestionar usuarios.");
+      navigation.goBack();
+      return;
+    }
+
     // Carga de Iglesias
     if (["pastores", "iglesias", "hijos", "reporte"].includes(path)) {
       fetch(`${config.API_URL}/iglesias/`)
@@ -50,7 +58,7 @@ export default function EditScreen({ route, navigation }) {
         .catch((e) => console.log("Error IG fetch", e));
     }
     // Carga de Pastores
-    if (["hijos", "reporte"].includes(path)) {
+    if (["hijos", "reporte", "usuarios"].includes(path)) {
       fetch(`${config.API_URL}/pastores/`)
         .then((r) => r.json())
         .then((data) => setPastoresList(Array.isArray(data) ? data : []))
@@ -77,7 +85,11 @@ export default function EditScreen({ route, navigation }) {
             ? "id_hijo"
             : path === "iglesias"
               ? "id_iglesia"
-              : "id";
+              : path === "reuniones"
+                ? "id_reunion"
+                : path === "usuarios"
+                  ? "id_usuario"
+                  : "id";
 
     // 3. Determinar si es Edición (PUT) o Nuevo (POST)
     const isEditing = item && item[primaryKey];
@@ -156,7 +168,7 @@ export default function EditScreen({ route, navigation }) {
     );
   };
 
-  const renderInput = (label, key, keyboard = "default") => (
+  const renderInput = (label, key, keyboard = "default", secure = false) => (
     <View style={styles.inputGroup}>
       <Text style={styles.label}>{label}</Text>
       <TextInput
@@ -164,6 +176,7 @@ export default function EditScreen({ route, navigation }) {
         value={formData[key]?.toString()}
         onChangeText={(text) => setFormData({ ...formData, [key]: text })}
         keyboardType={keyboard}
+        secureTextEntry={secure}
       />
     </View>
   );
@@ -198,20 +211,21 @@ export default function EditScreen({ route, navigation }) {
     </TouchableOpacity>
   );
 
-  return (
-    <LinearGradient colors={["#1A237E", "#3949AB"]} style={{ flex: 1 }}>
-      <Animated.View style={{ flex: 1, opacity: fadeAnim }}>
-        <ScrollView 
-          style={{ flex: 1 }} 
-          contentContainerStyle={{ flexGrow: 1, padding: 20, paddingBottom: 100 }}
-          showsVerticalScrollIndicator={true}
-          nestedScrollEnabled={true}
-          scrollEnabled={true}
-          keyboardShouldPersistTaps="handled"
-        >
-      <Text style={styles.headerTitle}>
-        {item.id ? "Editar" : "Nuevo"} Registro
-      </Text>
+    const isEditMode = !!(formData.id_pastor || formData.id_iglesia || formData.id_reunion || formData.id_reporte || formData.id_hijo || formData.id_usuario);
+    return (
+      <LinearGradient colors={["#1A237E", "#3949AB"]} style={{ flex: 1 }}>
+        <Animated.View style={{ flex: 1, opacity: fadeAnim }}>
+          <ScrollView 
+            style={{ flex: 1 }} 
+            contentContainerStyle={{ flexGrow: 1, padding: 20, paddingBottom: 100 }}
+            showsVerticalScrollIndicator={true}
+            nestedScrollEnabled={true}
+            scrollEnabled={true}
+            keyboardShouldPersistTaps="handled"
+          >
+        <Text style={styles.headerTitle}>
+          {isEditMode ? "Editar" : "Nuevo"} Registro
+        </Text>
 
       {path === "pastores" && (
         <>
@@ -326,6 +340,22 @@ export default function EditScreen({ route, navigation }) {
           {renderDatePicker("Fecha", "fecha")}
           {renderInput("Lugar", "lugar")}
           {renderInput("Descripción", "descripcion")}
+        </>
+      )}
+      
+      {path === "usuarios" && (
+        <>
+          {renderInput("Nombre de Usuario", "username")}
+          {renderInput("Contraseña (Dejar vacío para no cambiar)", "password", "default", true)}
+          {renderPicker("Rol del Sistema", "rol", [
+            {label: "Administrador (Admin)", value: "Admin"},
+            {label: "Presbítero", value: "Presbitero"},
+            {label: "Secretario", value: "Secretario"},
+            {label: "Tesorero", value: "Tesorero"},
+            {label: "Pastor", value: "Pastor"}
+          ])}
+          {renderPicker("Vincular con Pastor", "id_pastor", pastoresList.map(p => ({label: `${p.nombre} ${p.apellido}`, value: p.id_pastor})))}
+          <Text style={styles.infoNote}>* Al asignar un rol especial (Presbítero, Tesorero, Secretario), el sistema removerá automáticamente ese rol del usuario anterior.</Text>
         </>
       )}
 
@@ -457,4 +487,5 @@ const styles = StyleSheet.create({
   },
   sectionTitle: { color: "#FFF", fontWeight: "bold", fontSize: 13, textTransform: "uppercase", letterSpacing: 1.5 },
   row: { flexDirection: "row", justifyContent: "space-between" },
+  infoNote: { color: "#FFF", fontSize: 12, fontStyle: "italic", marginTop: 10, opacity: 0.8 },
 });

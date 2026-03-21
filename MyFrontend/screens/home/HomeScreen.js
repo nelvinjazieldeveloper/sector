@@ -3,7 +3,7 @@ import { View, Text, TouchableOpacity, StyleSheet, ScrollView, SafeAreaView, Ima
 import { LinearGradient } from 'expo-linear-gradient';
 import config from '../../config';
 
-const MenuButton = ({ title, onPress, subtitle, color = '#1A237E', index = 0 }) => {
+export const MenuButton = ({ title, onPress, subtitle, color = '#1A237E', index = 0 }) => {
   const scaleAnim = useRef(new Animated.Value(1)).current;
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(30)).current;
@@ -68,13 +68,15 @@ export default function HomeScreen({ navigation, user }) {
   }, []);
 
   const userRol = user?.rol?.toLowerCase();
-  const isAdmin = userRol === 'admin' || userRol === 'presbitero' || userRol === 'secretario';
+  const isAdmin = userRol === 'admin';
+  const isManager = isAdmin || userRol === 'presbitero' || userRol === 'secretario';
   const isTesorero = userRol === 'tesorero';
+  const isSectorStaff = isManager || isTesorero; // Roles que ven datos globales
   
   // LOG PARA DEPURACIÓN (Verificar en consola de Expo si id_pastor existe)
   // console.log("Session User:", userRol, user?.id_pastor);
 
-  const extraParams = !isAdmin && user?.id_pastor ? { id_pastor: user.id_pastor } : {};
+  const extraParams = !isSectorStaff && user?.id_pastor ? { id_pastor: user.id_pastor } : {};
 
   // Forzar que el pastor vea sus propios datos siempre
   useEffect(() => {
@@ -111,48 +113,61 @@ export default function HomeScreen({ navigation, user }) {
         {error && <Text style={styles.errorText}>Error de conexión: {error}</Text>}
 
         <View style={styles.menuGrid}>
-          {/* Módulos de Gestión (Solo si NO es tesorero) */}
-          {!isTesorero && (
+          {/* SECCIÓN SECRETARÍA */}
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>Secretaría</Text>
+          </View>
+          
+          {isManager && (
             <>
               <MenuButton 
                 index={0}
-                title="Pastores" 
-                subtitle="Gestión ministerial" 
-                color="#2E7D32" 
+                title="Pastores" subtitle="Gestión ministerial" color="#2E7D32" 
                 onPress={() => navigation.navigate('Pastores', { path: 'pastores', title: 'Pastores', user_rol: user.rol, ...extraParams })} 
               />
               <MenuButton 
                 index={1}
-                title="Iglesias" 
-                subtitle="Sedes y membresía" 
-                color="#1A237E" 
+                title="Iglesias" subtitle="Sedes y membresía" color="#1A237E" 
                 onPress={() => navigation.navigate('Iglesias', { path: 'iglesias', title: 'Iglesias', user_rol: user.rol, ...extraParams })} 
               />
               <MenuButton 
                 index={2}
-                title="Hijos" 
-                subtitle="Registro familiar" 
-                color="#C62828" 
+                title="Hijos" subtitle="Registro familiar" color="#C62828" 
                 onPress={() => navigation.navigate('Hijos', { path: 'hijos', title: 'Hijos', user_rol: user.rol, ...extraParams })} 
               />
             </>
           )}
-
-          {/* Módulos Operativos (Para todos) */}
+          
+          {/* Reuniones es Operativo para todos */}
           <MenuButton 
             index={3}
-            title="Reportes" 
-            subtitle="Finanzas y estadísticas" 
-            color="#D4AF37" 
-            onPress={() => navigation.navigate('Reportes', { path: 'reporte', title: 'Reportes', user_rol: user.rol, ...extraParams })} 
-          />
-          <MenuButton 
-            index={4}
-            title="Reuniones" 
-            subtitle="Agenda sectorial" 
-            color="#6A1B9A" 
+            title="Reuniones" subtitle="Agenda sectorial" color="#6A1B9A" 
             onPress={() => navigation.navigate('Reuniones', { path: 'reuniones', title: 'Reuniones', user_rol: user.rol })} 
           />
+
+          {/* SECCIÓN TESORERÍA */}
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>Tesorería</Text>
+          </View>
+          <MenuButton 
+            index={4}
+            title="Reportes" subtitle="Finanzas y estadísticas" color="#D4AF37" 
+            onPress={() => navigation.navigate('Reportes', { path: 'reporte', title: 'Reportes', user_rol: user.rol, ...extraParams })} 
+          />
+
+          {/* Administración (SOLO ADMIN) */}
+          {isAdmin && (
+            <>
+              <View style={styles.sectionHeader}>
+                <Text style={styles.sectionTitle}>Administración</Text>
+              </View>
+              <MenuButton 
+                index={5}
+                title="Usuarios" subtitle="Roles y Permisos" color="#000000" 
+                onPress={() => navigation.navigate('List', { path: 'usuarios', title: 'Gestión de Usuarios', user_rol: user.rol })} 
+              />
+            </>
+          )}
         </View>
     </ScrollView>
   </LinearGradient>
@@ -200,7 +215,23 @@ const styles = StyleSheet.create({
   cardTitle: { fontSize: 19, fontWeight: 'bold', marginBottom: 4 },
   cardSubtitle: { fontSize: 14, color: '#555', fontWeight: '500' },
   arrow: { fontSize: 22, fontWeight: 'bold' },
-  errorText: { color: '#FFEBEE', textAlign: 'center', marginBottom: 10, fontWeight: 'bold' }
+  errorText: { color: '#FFEBEE', textAlign: 'center', marginBottom: 10, fontWeight: 'bold' },
+  sectionHeader: { 
+    width: '100%', 
+    paddingHorizontal: 10, 
+    marginTop: 25, 
+    marginBottom: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(255,255,255,0.2)',
+    paddingBottom: 5
+  },
+  sectionTitle: { 
+    color: '#FFD700', 
+    fontSize: 16, 
+    fontWeight: 'bold', 
+    textTransform: 'uppercase', 
+    letterSpacing: 2 
+  },
 });
 
 // Final del archivo - Cerramos ScrollView y LinearGradient
