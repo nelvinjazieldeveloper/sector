@@ -11,6 +11,7 @@ import {
   Animated,
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
+import DateTimePicker from "@react-native-community/datetimepicker";
 import { LinearGradient } from "expo-linear-gradient";
 import config from "../config";
 
@@ -113,6 +114,48 @@ export default function EditScreen({ route, navigation }) {
     }
   };
 
+  const [showDatePicker, setShowDatePicker] = useState({ show: false, key: "" });
+
+  const onDateChange = (event, selectedDate, key) => {
+    setShowDatePicker({ show: false, key: "" });
+    if (selectedDate) {
+      const year = selectedDate.getFullYear();
+      const month = String(selectedDate.getMonth() + 1).padStart(2, '0');
+      const day = String(selectedDate.getDate()).padStart(2, '0');
+      const formattedDate = `${year}-${month}-${day}`;
+      setFormData({ ...formData, [key]: formattedDate });
+    }
+  };
+
+  const renderDatePicker = (label, key) => {
+    const currentDate = formData[key] ? new Date(formData[key]) : new Date();
+    // Validar si la fecha es válida, si no, usar hoy
+    const validDate = isNaN(currentDate.getTime()) ? new Date() : currentDate;
+
+    return (
+      <View style={styles.inputGroup}>
+        <Text style={styles.label}>{label}</Text>
+        <TouchableOpacity 
+          style={styles.datePickerButton} 
+          onPress={() => setShowDatePicker({ show: true, key })}
+        >
+          <Text style={styles.dateText}>
+            {formData[key] ? formData[key] : "Seleccionar fecha..."}
+          </Text>
+          <Text style={styles.calendarIcon}>📅</Text>
+        </TouchableOpacity>
+        {showDatePicker.show && showDatePicker.key === key && (
+          <DateTimePicker
+            value={validDate}
+            mode="date"
+            display="default"
+            onChange={(event, date) => onDateChange(event, date, key)}
+          />
+        )}
+      </View>
+    );
+  };
+
   const renderInput = (label, key, keyboard = "default") => (
     <View style={styles.inputGroup}>
       <Text style={styles.label}>{label}</Text>
@@ -195,7 +238,7 @@ export default function EditScreen({ route, navigation }) {
           {renderInput("Dirección", "direccion")}
           {renderInput("Cantidad de Miembros", "cantidad_miembros", "numeric")}
           {renderPicker("Zona", "zona", [1,2,3,4,5,6].map(z => ({label: `Zona ${z}`, value: z})))}
-          {renderInput("Fecha Fundación (AAAA-MM-DD)", "fecha_fundacion")}
+          {renderDatePicker("Fecha Fundación", "fecha_fundacion")}
           <View style={styles.infraBox}>
             <Text style={styles.infraTitle}>Infraestructura y Estatus</Text>
             {renderSwitch("¿Tiene Terreno Propio?", "tiene_terreno")}
@@ -271,7 +314,7 @@ export default function EditScreen({ route, navigation }) {
             {label: "Transferencia", value: "Transferencia"}
           ])}
           {renderInput("Banco Destino", "banco_destino")}
-          {renderInput("Fecha de Pago (AAAA-MM-DD)", "fecha_pago")}
+          {renderDatePicker("Fecha de Pago", "fecha_pago")}
           {renderInput("Referencia", "referencia")}
           {renderInput("Observaciones", "observaciones")}
         </>
@@ -280,7 +323,7 @@ export default function EditScreen({ route, navigation }) {
       {path === "reuniones" && (
         <>
           {renderInput("Título", "titulo")}
-          {renderInput("Fecha (AAAA-MM-DD)", "fecha")}
+          {renderDatePicker("Fecha", "fecha")}
           {renderInput("Lugar", "lugar")}
           {renderInput("Descripción", "descripcion")}
         </>
@@ -337,6 +380,24 @@ const styles = StyleSheet.create({
     borderColor: "#DDD",
     padding: 12,
     borderRadius: 8,
+    color: "#333",
+  },
+  datePickerButton: {
+    backgroundColor: "#FFF",
+    borderWidth: 1,
+    borderColor: "#DDD",
+    padding: 12,
+    borderRadius: 8,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  dateText: {
+    fontSize: 16,
+    color: "#333",
+  },
+  calendarIcon: {
+    fontSize: 18,
   },
   pickerContainer: {
     backgroundColor: "#FFF",

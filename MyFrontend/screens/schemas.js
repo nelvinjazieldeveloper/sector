@@ -34,6 +34,7 @@ export default {
     { key: "nombre_iglesia", label: "Nombre de la Iglesia" },
     { key: "direccion", label: "Dirección" },
     { key: "cantidad_miembros", label: "Miembros", type: "numeric" },
+    { key: "fecha_fundacion", type: "date", label: "Fecha Fundación" },
     {
       key: "zona",
       type: "select",
@@ -71,6 +72,7 @@ export default {
     { key: "anio_reportado", type: "numeric", label: "Año" },
     { key: "diezmos_bs", type: "numeric", label: "Diezmos (Bs)" },
     { key: "diezmos_usd", type: "numeric", label: "Diezmos ($)" },
+    { key: "fecha_pago", type: "date", label: "Fecha de Pago" },
     {
       key: "tipo_pago",
       type: "select",

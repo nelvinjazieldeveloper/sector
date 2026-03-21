@@ -15,11 +15,11 @@ switch ($method) {
         if ($id_reunion) {
             $sql = "SELECT 
                         p.id_pastor, p.nombre, p.apellido,
-                        i.id_inasistencia,
-                        CASE WHEN i.id_inasistencia IS NULL THEN 'Asistió' ELSE 'Inasistente' END as estatus,
-                        i.motivo, i.justificada
+                        a.id_asistencia,
+                        CASE WHEN a.id_asistencia IS NOT NULL THEN 'Asistió' ELSE 'Inasistente' END as estatus,
+                        a.motivo, a.justificada
                     FROM pastores p
-                    LEFT JOIN inasistencias i ON p.id_pastor = i.id_pastor AND i.id_reunion = ?
+                    LEFT JOIN asistencias a ON p.id_pastor = a.id_pastor AND a.id_reunion = ?
                     ORDER BY p.apellido ASC";
             $stmt = $pdo->prepare($sql);
             $stmt->execute([$id_reunion]);
@@ -29,16 +29,16 @@ switch ($method) {
 
     case 'POST':
         $data = json_decode(file_get_contents("php://input"), true);
-        $sql = "INSERT INTO inasistencias (id_reunion, id_pastor, motivo, justificada) VALUES (?, ?, ?, ?)";
+        $sql = "INSERT INTO asistencias (id_reunion, id_pastor, motivo, justificada) VALUES (?, ?, ?, ?)";
         try {
             $stmt = $pdo->prepare($sql);
             $stmt->execute([
                 $data['id_reunion'], 
                 $data['id_pastor'], 
-                $data['motivo'] ?? 'Sin motivo', 
+                $data['motivo'] ?? '', 
                 $data['justificada'] ?? 0
             ]);
-            echo json_encode(["message" => "Inasistencia registrada"]);
+            echo json_encode(["message" => "Asistencia registrada", "id" => $pdo->lastInsertId()]);
         } catch (Exception $e) {
             http_response_code(400);
             echo json_encode(["error" => $e->getMessage()]);
@@ -46,26 +46,26 @@ switch ($method) {
         break;
 
     case 'PUT':
-        // NUEVO: Para actualizar la justificación
         $data = json_decode(file_get_contents("php://input"), true);
         $id = isset($_GET['id']) ? intval($_GET['id']) : null;
         
         if ($id) {
-            $sql = "UPDATE inasistencias SET justificada = ?, motivo = ? WHERE id_inasistencia = ?";
+            $sql = "UPDATE asistencias SET justificada = ?, motivo = ? WHERE id_asistencia = ?";
             $stmt = $pdo->prepare($sql);
             $stmt->execute([
                 $data['justificada'], 
                 $data['motivo'], 
                 $id
             ]);
-            echo json_encode(["message" => "Justificación actualizada"]);
+            echo json_encode(["message" => "Datos de asistencia actualizados"]);
         }
         break;
 
     case 'DELETE':
         $id = isset($_GET['id']) ? intval($_GET['id']) : null;
-        $stmt = $pdo->prepare("DELETE FROM inasistencias WHERE id_inasistencia = ?");
+        $stmt = $pdo->prepare("DELETE FROM asistencias WHERE id_asistencia = ?");
         $stmt->execute([$id]);
-        echo json_encode(["message" => "Asistencia restaurada"]);
+        echo json_encode(["message" => "Asistencia eliminada (marcado como inasistente)"]);
         break;
 }
+?>

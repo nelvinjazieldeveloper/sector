@@ -16,10 +16,8 @@ tags:
     description: Gestión de hijos de pastores
   - name: Reportes
     description: Gestión de reportes mensuales de diezmos y ofrendas
-  - name: Reuniones
-    description: Gestión de reuniones y asistencia
-  - name: Inasistencias
-    description: Gestión detallada de inasistencias
+  - name: Asistencias
+    description: Gestión detallada de asistencias
 
 paths:
   /path:
@@ -521,7 +519,7 @@ paths:
                       $ref: "#/components/schemas/Reunion"
                   - type: array
                     items:
-                      $ref: "#/components/schemas/ReunionInasistencia"
+                      $ref: "#/components/schemas/ReunionAsistencia"
     post:
       tags:
         - Reuniones
@@ -537,7 +535,7 @@ paths:
             schema:
               oneOf:
                 - $ref: "#/components/schemas/ReunionInput"
-                - $ref: "#/components/schemas/InasistenciaInput"
+                - $ref: "#/components/schemas/AsistenciaInput"
       responses:
         "200":
           description: Operación exitosa
@@ -576,17 +574,15 @@ paths:
                     type: string
                     example: "Reunión y sus inasistencias eliminadas"
         "500":
-          description: Error del servidor
-
+      # --------------------------------------------------------------------------------
+  # ASISTENCIAS
   # --------------------------------------------------------------------------------
-  # INASISTENCIAS
-  # --------------------------------------------------------------------------------
-  /inasistencias:
+  /asistencias:
     get:
       tags:
-        - Inasistencias
-      summary: Gestionar inasistencias
-      description: Obtiene lista de asistencia por reunión o lista global de inasistencias.
+        - Asistencias
+      summary: Gestionar asistencias
+      description: Obtiene lista de asistencia por reunión o lista global de asistencias.
       parameters:
         - in: query
           name: id_reunion
@@ -595,26 +591,26 @@ paths:
           description: ID de la reunión para ver reporte de asistencia completo
       responses:
         "200":
-          description: Lista de inasistencias o estado de pastores
+          description: Lista de asistencias o estado de pastores
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/InasistenciaDetalle"
+                  $ref: "#/components/schemas/AsistenciaDetalle"
     post:
       tags:
-        - Inasistencias
-      summary: Registrar inasistencia explícita
+        - Asistencias
+      summary: Registrar asistencia explícita
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/InasistenciaInput"
+              $ref: "#/components/schemas/AsistenciaInput"
       responses:
         "200":
-          description: Inasistencia registrada
+          description: Asistencia registrada
           content:
             application/json:
               schema:
@@ -624,27 +620,29 @@ paths:
                     type: string
         "400":
           $ref: "#/components/responses/BadRequest"
-
+ 
     delete:
       tags:
-        - Inasistencias
-      summary: Eliminar una inasistencia (Marcar como Asistió)
+        - Asistencias
+      summary: Eliminar una asistencia (Marcar como Inasistente)
       parameters:
         - in: query
           name: id
           schema:
             type: integer
           required: true
-          description: ID de la inasistencia a eliminar
+          description: ID de la asistencia a eliminar
       responses:
         "200":
-          description: Inasistencia eliminada
+          description: Asistencia eliminada
           content:
             application/json:
               schema:
                 type: object
                 properties:
                   message:
+                    type: string
+ message:
                     type: string
 
 components:
@@ -826,8 +824,8 @@ components:
               type: integer
         - $ref: "#/components/schemas/ReunionInput"
 
-    # --- INASISTENCIA ---
-    InasistenciaInput:
+    # --- ASISTENCIA ---
+    AsistenciaInput:
       type: object
       properties:
         id_reunion:
@@ -840,10 +838,10 @@ components:
           type: integer
           description: 0 = No, 1 = Si
 
-    InasistenciaDetalle:
+    AsistenciaDetalle:
       type: object
       properties:
-        id_inasistencia:
+        id_asistencia:
           type: integer
         id_pastor:
           type: integer
@@ -859,10 +857,10 @@ components:
         justificada:
           type: integer
 
-    ReunionInasistencia:
+    ReunionAsistencia:
       type: object
       properties:
-        id_inasistencia:
+        id_asistencia:
           type: integer
         nombre:
           type: string

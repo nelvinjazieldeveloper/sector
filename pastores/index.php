@@ -24,6 +24,14 @@ switch ($method) {
             $stmt = $database->prepare($sql);
             $stmt->execute([$_GET['id']]);
             $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        } elseif (isset($_GET['cedula'])) {
+            $sql = "SELECT p.*, i.nombre_iglesia 
+                    FROM pastores p
+                    LEFT JOIN iglesias i ON p.id_iglesia = i.id_iglesia 
+                    WHERE p.cedula = ?";
+            $stmt = $database->prepare($sql);
+            $stmt->execute([$_GET['cedula']]);
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
         } else {
             $sql = "SELECT p.*, i.nombre_iglesia 
                     FROM pastores p

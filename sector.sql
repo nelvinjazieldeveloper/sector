@@ -81,11 +81,11 @@ INSERT INTO `iglesias` (`id_iglesia`, `nombre_iglesia`, `direccion`, `cantidad_m
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `inasistencias`
+-- Estructura de tabla para la tabla `asistencias`
 --
 
-CREATE TABLE `inasistencias` (
-  `id_inasistencia` int(11) NOT NULL,
+CREATE TABLE `asistencias` (
+  `id_asistencia` int(11) NOT NULL,
   `id_reunion` int(11) NOT NULL,
   `id_pastor` int(11) NOT NULL,
   `motivo` text DEFAULT NULL,
@@ -216,10 +216,10 @@ ALTER TABLE `iglesias`
   ADD PRIMARY KEY (`id_iglesia`);
 
 --
--- Indices de la tabla `inasistencias`
+-- Indices de la tabla `asistencias`
 --
-ALTER TABLE `inasistencias`
-  ADD PRIMARY KEY (`id_inasistencia`),
+ALTER TABLE `asistencias`
+  ADD PRIMARY KEY (`id_asistencia`),
   ADD KEY `id_reunion` (`id_reunion`),
   ADD KEY `id_pastor` (`id_pastor`);
 
@@ -261,10 +261,10 @@ ALTER TABLE `iglesias`
   MODIFY `id_iglesia` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT de la tabla `inasistencias`
+-- AUTO_INCREMENT de la tabla `asistencias`
 --
-ALTER TABLE `inasistencias`
-  MODIFY `id_inasistencia` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+ALTER TABLE `asistencias`
+  MODIFY `id_asistencia` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT de la tabla `pastores`
@@ -295,11 +295,11 @@ ALTER TABLE `hijos_pastores`
   ADD CONSTRAINT `hijos_pastores_ibfk_1` FOREIGN KEY (`id_pastor`) REFERENCES `pastores` (`id_pastor`) ON DELETE CASCADE;
 
 --
--- Filtros para la tabla `inasistencias`
+-- Filtros para la tabla `asistencias`
 --
-ALTER TABLE `inasistencias`
-  ADD CONSTRAINT `inasistencias_ibfk_1` FOREIGN KEY (`id_reunion`) REFERENCES `reuniones` (`id_reunion`) ON DELETE CASCADE,
-  ADD CONSTRAINT `inasistencias_ibfk_2` FOREIGN KEY (`id_pastor`) REFERENCES `pastores` (`id_pastor`) ON DELETE CASCADE;
+ALTER TABLE `asistencias`
+  ADD CONSTRAINT `asistencias_ibfk_1` FOREIGN KEY (`id_reunion`) REFERENCES `reuniones` (`id_reunion`) ON DELETE CASCADE,
+  ADD CONSTRAINT `asistencias_ibfk_2` FOREIGN KEY (`id_pastor`) REFERENCES `pastores` (`id_pastor`) ON DELETE CASCADE;
 
 --
 -- Filtros para la tabla `reportes_mensuales`

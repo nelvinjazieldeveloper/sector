@@ -8,6 +8,8 @@ import HomeScreen from './screens/home/HomeScreen';
 import ListScreen from './screens/ListScreen';
 import EditScreen from './screens/EditScreen';
 import ReportDetailScreen from './screens/ReportDetailScreen';
+import AttendanceScreen from './screens/AttendanceScreen';
+import QRScannerScreen from './screens/QRScannerScreen';
 
 const Stack = createStackNavigator();
 
@@ -26,6 +28,8 @@ export default function App() {
           <Stack.Screen name="List" component={ListScreen} />
           <Stack.Screen name="Edit" component={EditScreen} />
           <Stack.Screen name="DetalleReporte" component={ReportDetailScreen} />
+          <Stack.Screen name="Attendance" component={AttendanceScreen} options={{ title: 'Control de Asistencia' }} />
+          <Stack.Screen name="QRScanner" component={QRScannerScreen} options={{ headerShown: false }} />
         </Stack.Navigator>
       </NavigationContainer>
     </SafeAreaProvider>
