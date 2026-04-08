@@ -48,6 +48,7 @@ import AttendanceScreen from './screens/AttendanceScreen';
 import QRScannerScreen from './screens/QRScannerScreen';
 import LoginScreen from './screens/LoginScreen';
 import DepartmentMenuScreen from './screens/DepartmentMenuScreen';
+import GlobalMapScreen from './screens/GlobalMapScreen';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -80,30 +81,66 @@ function SharedStack({ user, handleLogout }) {
       <Stack.Screen name="DetalleReporte" component={ReportDetailScreen} options={{ title: 'Detalle de Reporte' }} />
       <Stack.Screen name="Attendance" component={AttendanceScreen} options={{ title: 'Control de Asistencia' }} />
       <Stack.Screen name="QRScanner" component={QRScannerScreen} options={{ headerShown: false }} />
+      <Stack.Screen name="GlobalMap" component={GlobalMapScreen} options={{ headerShown: false }} />
     </Stack.Navigator>
   );
 }
 
 // Stacks específicos para los Tabs (para que cada uno tenga su raíz)
 const SecretariaStack = ({ user, handleLogout }) => (
-  <Stack.Navigator screenOptions={{ headerStyle: { backgroundColor: '#1A237E' }, headerTintColor: '#FFF' }}>
+  <Stack.Navigator 
+    screenOptions={{ 
+      headerStyle: { backgroundColor: '#1A237E' }, 
+      headerTintColor: '#FFF',
+      headerRight: () => (
+        <TouchableOpacity onPress={handleLogout} style={{ marginRight: 15 }}>
+          <Text style={{ color: '#FFD700', fontWeight: 'bold', fontSize: 12 }}>SALIR</Text>
+        </TouchableOpacity>
+      )
+    }}
+  >
     <Stack.Screen 
       name="SecretariaMenu" 
       options={{ title: 'Secretaría' }}
     >
       {props => <DepartmentMenuScreen {...props} user={user} route={{...props.route, params: { department: 'Secretaría', title: 'Secretaría' }}} />}
     </Stack.Screen>
+    <Stack.Screen name="Pastores" component={ListScreen} options={{ title: 'Pastores' }} />
+    <Stack.Screen name="Iglesias" component={ListScreen} options={{ title: 'Iglesias' }} />
+    <Stack.Screen name="Hijos" component={ListScreen} options={{ title: 'Hijos' }} />
+    <Stack.Screen name="Reuniones" component={ListScreen} options={{ title: 'Reuniones' }} />
+    <Stack.Screen name="List" component={ListScreen} />
+    <Stack.Screen name="Edit" component={EditScreen} options={{ title: 'Editar Registro' }} />
+    <Stack.Screen name="DetalleReporte" component={ReportDetailScreen} options={{ title: 'Detalle de Reporte' }} />
+    <Stack.Screen name="Attendance" component={AttendanceScreen} options={{ title: 'Control de Asistencia' }} />
+    <Stack.Screen name="QRScanner" component={QRScannerScreen} options={{ headerShown: false }} />
   </Stack.Navigator>
 );
 
 const TesoreriaStack = ({ user, handleLogout }) => (
-  <Stack.Navigator screenOptions={{ headerStyle: { backgroundColor: '#1A237E' }, headerTintColor: '#FFF' }}>
+  <Stack.Navigator 
+    screenOptions={{ 
+      headerStyle: { backgroundColor: '#1A237E' }, 
+      headerTintColor: '#FFF',
+      headerRight: () => (
+        <TouchableOpacity onPress={handleLogout} style={{ marginRight: 15 }}>
+          <Text style={{ color: '#FFD700', fontWeight: 'bold', fontSize: 12 }}>SALIR</Text>
+        </TouchableOpacity>
+      )
+    }}
+  >
     <Stack.Screen 
       name="TesoreriaMenu" 
       options={{ title: 'Tesorería' }}
     >
       {props => <DepartmentMenuScreen {...props} user={user} route={{...props.route, params: { department: 'Tesorería', title: 'Tesorería' }}} />}
     </Stack.Screen>
+    <Stack.Screen name="Reportes" component={ListScreen} options={{ title: 'Reportes' }} />
+    <Stack.Screen name="DetalleReporte" component={ReportDetailScreen} options={{ title: 'Detalle de Reporte' }} />
+    <Stack.Screen name="List" component={ListScreen} />
+    <Stack.Screen name="Edit" component={EditScreen} options={{ title: 'Editar Registro' }} />
+    <Stack.Screen name="Attendance" component={AttendanceScreen} options={{ title: 'Control de Asistencia' }} />
+    <Stack.Screen name="QRScanner" component={QRScannerScreen} options={{ headerShown: false }} />
   </Stack.Navigator>
 );
 

@@ -71,6 +71,7 @@ export default function HomeScreen({ navigation, user }) {
   const isAdmin = userRol === 'admin';
   const isManager = isAdmin || userRol === 'presbitero' || userRol === 'secretario';
   const isTesorero = userRol === 'tesorero';
+  const isPastor = userRol === 'pastor';
   const isSectorStaff = isManager || isTesorero; // Roles que ven datos globales
   
   // LOG PARA DEPURACIÓN (Verificar en consola de Expo si id_pastor existe)
@@ -113,25 +114,35 @@ export default function HomeScreen({ navigation, user }) {
         {error && <Text style={styles.errorText}>Error de conexión: {error}</Text>}
 
         <View style={styles.menuGrid}>
+          {/* SECCIÓN GEOLOCALIZACIÓN */}
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>Geolocalización</Text>
+          </View>
+          <MenuButton 
+            index={0}
+            title="Mapa de Iglesias" subtitle="Ubicación y rutas" color="#1A237E" 
+            onPress={() => navigation.navigate('GlobalMap')} 
+          />
+
           {/* SECCIÓN SECRETARÍA */}
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>Secretaría</Text>
           </View>
           
-          {isManager && (
+          {(isManager || isPastor) && (
             <>
               <MenuButton 
-                index={0}
-                title="Pastores" subtitle="Gestión ministerial" color="#2E7D32" 
+                index={1}
+                title="Pastores" subtitle={isPastor ? "Mi perfil ministerial" : "Gestión ministerial"} color="#2E7D32" 
                 onPress={() => navigation.navigate('Pastores', { path: 'pastores', title: 'Pastores', user_rol: user.rol, ...extraParams })} 
               />
               <MenuButton 
-                index={1}
-                title="Iglesias" subtitle="Sedes y membresía" color="#1A237E" 
+                index={2}
+                title="Iglesias" subtitle={isPastor ? "Mi congregación" : "Sedes y membresía"} color="#1A237E" 
                 onPress={() => navigation.navigate('Iglesias', { path: 'iglesias', title: 'Iglesias', user_rol: user.rol, ...extraParams })} 
               />
               <MenuButton 
-                index={2}
+                index={3}
                 title="Hijos" subtitle="Registro familiar" color="#C62828" 
                 onPress={() => navigation.navigate('Hijos', { path: 'hijos', title: 'Hijos', user_rol: user.rol, ...extraParams })} 
               />
@@ -140,7 +151,7 @@ export default function HomeScreen({ navigation, user }) {
           
           {/* Reuniones es Operativo para todos */}
           <MenuButton 
-            index={3}
+            index={4}
             title="Reuniones" subtitle="Agenda sectorial" color="#6A1B9A" 
             onPress={() => navigation.navigate('Reuniones', { path: 'reuniones', title: 'Reuniones', user_rol: user.rol })} 
           />

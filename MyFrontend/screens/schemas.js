@@ -95,6 +95,8 @@ export default {
     { key: "apellido", label: "Apellido" },
     { key: "sexo", type: "select", options: ["M", "F"], label: "Sexo" },
     { key: "edad", type: "numeric", label: "Edad" },
+    { key: "talentos", label: "Talentos / Habilidades", multiline: true },
+    { key: "estudios", label: "Estudios / Profesión" },
   ],
   usuarios: [
     { key: "username", label: "Usuario" },

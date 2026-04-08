@@ -56,14 +56,16 @@ switch ($method) {
             echo json_encode(["error" => "Datos no recibidos"]);
             break;
         }
-        $sql = "INSERT INTO hijos_pastores (id_pastor, nombre, apellido, sexo, edad) VALUES (?, ?, ?, ?, ?)";
+        $sql = "INSERT INTO hijos_pastores (id_pastor, nombre, apellido, sexo, edad, talentos, estudios) VALUES (?, ?, ?, ?, ?, ?, ?)";
         $stmt = $database->prepare($sql);
         $stmt->execute([
             $input['id_pastor'], 
             $input['nombre'], 
             $input['apellido'], 
             $input['sexo'], 
-            $input['edad']
+            $input['edad'],
+            $input['talentos'] ?? '',
+            $input['estudios'] ?? ''
         ]);
         echo json_encode(["message" => "Hijo(a) registrado con éxito", "id" => $database->lastInsertId()]);
         break;
@@ -76,13 +78,15 @@ switch ($method) {
         }
         // Nota: usualmente no cambiamos el id_pastor al editar al hijo, 
         // pero si lo necesitas, agrégalo al SET y al execute.
-        $sql = "UPDATE hijos_pastores SET nombre=?, apellido=?, sexo=?, edad=? WHERE id_hijo=?";
+        $sql = "UPDATE hijos_pastores SET nombre=?, apellido=?, sexo=?, edad=?, talentos=?, estudios=? WHERE id_hijo=?";
         $stmt = $database->prepare($sql);
         $stmt->execute([
             $input['nombre'], 
             $input['apellido'], 
             $input['sexo'], 
             $input['edad'], 
+            $input['talentos'] ?? '',
+            $input['estudios'] ?? '',
             $_GET['id']
         ]);
         echo json_encode(["message" => "Datos del hijo(a) actualizados"]);

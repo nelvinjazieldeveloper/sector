@@ -65,7 +65,9 @@ CREATE TABLE `iglesias` (
   `estatus_activo` tinyint(1) DEFAULT 1,
   `fecha_registro` timestamp NOT NULL DEFAULT current_timestamp(),
   `tiene_terreno` tinyint(1) DEFAULT 0,
-  `tiene_casa_pastoral` tinyint(1) DEFAULT 0
+  `tiene_casa_pastoral` tinyint(1) DEFAULT 0,
+  `latitud` varchar(50) DEFAULT NULL,
+  `longitud` varchar(50) DEFAULT NULL
 ) ;
 
 --

@@ -107,11 +107,17 @@ export default function ListScreen({ route, navigation }) {
       } else {
         // Solo permitir editar si canAdd es true (o una lógica específica de edición)
         // Por ahora, si no puede añadir, asumimos que no debe editar registros generales
-        if (canAdd) {
-          navigation.navigate('Edit', { path, item, origin: 'List', user_rol: rol });
+        // Permitir que el pastor VEA los detalles, pero otros roles sin permiso siguen bloqueados
+        if (canAdd || rol === 'pastor') {
+          navigation.navigate('Edit', { 
+            path, 
+            item, 
+            origin: 'List', 
+            user_rol: rol,
+            readOnly: rol === 'pastor' // Pasar bandera de solo lectura
+          });
         } else {
-          // Para pastores, quizás solo ver? Por ahora bloqueamos edición general
-          Alert.alert("Acceso Restringido", "No tienes permisos para editar este registro.");
+          Alert.alert("Acceso Restringido", "No tienes permisos para ver estos detalles.");
         }
       }
     };

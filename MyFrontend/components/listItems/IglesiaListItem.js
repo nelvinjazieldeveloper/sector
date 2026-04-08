@@ -18,6 +18,9 @@ const IglesiaListItem = ({ item, onPress }) => {
           {parseInt(item.tiene_casa_pastoral) === 1 && (
             <View style={[styles.propBadge, {backgroundColor:'#E8F5E9'}]}><Text style={[styles.propText, {color:'#2E7D32'}]}>🏠 Casa</Text></View>
           )}
+          {(item.latitud && item.longitud) && (
+            <View style={[styles.propBadge, {backgroundColor:'#E3F2FD'}]}><Text style={[styles.propText, {color:'#1565C0'}]}>📍 Mapa</Text></View>
+          )}
         </View>
       </View>
     </TouchableOpacity>
