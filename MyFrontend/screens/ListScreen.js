@@ -104,17 +104,22 @@ export default function ListScreen({ route, navigation }) {
     const onPress = () => {
       if (path === 'reporte') {
         navigation.navigate('DetalleReporte', { item });
+      } else if (path === 'pastores' || path === 'iglesias' || path === 'hijos') {
+        navigation.navigate('Detail', { 
+          path, 
+          item, 
+          user_rol: rol,
+          origin: 'List'
+        });
       } else {
-        // Solo permitir editar si canAdd es true (o una lógica específica de edición)
-        // Por ahora, si no puede añadir, asumimos que no debe editar registros generales
-        // Permitir que el pastor VEA los detalles, pero otros roles sin permiso siguen bloqueados
+        // Otros casos (usuarios, reuniones) siguen con la lógica antigua de Edit directo o restringido
         if (canAdd || rol === 'pastor') {
           navigation.navigate('Edit', { 
             path, 
             item, 
             origin: 'List', 
             user_rol: rol,
-            readOnly: rol === 'pastor' // Pasar bandera de solo lectura
+            readOnly: rol === 'pastor'
           });
         } else {
           Alert.alert("Acceso Restringido", "No tienes permisos para ver estos detalles.");

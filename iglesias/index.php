@@ -23,7 +23,26 @@ switch ($method) {
     
     // 1. LEER (GET) - Lista todas las iglesias o una por ID
     case 'GET':
-        if (isset($_GET['id'])) {
+        if (isset($_GET['view']) && $_GET['view'] === 'directorio') {
+            $sql = "SELECT 
+                        i.id_iglesia,
+                        i.nombre_iglesia,
+                        i.direccion,
+                        i.zona,
+                        i.latitud,
+                        i.longitud,
+                        i.estatus_infraestructura,
+                        i.tiene_casa_pastoral,
+                        GROUP_CONCAT(DISTINCT CONCAT(p.nombre, ' ', p.apellido) SEPARATOR ', ') AS pastor_nombre,
+                        GROUP_CONCAT(DISTINCT p.telefono SEPARATOR ' / ') AS pastor_telefono
+                    FROM iglesias i 
+                    LEFT JOIN pastores p ON i.id_iglesia = p.id_iglesia 
+                    GROUP BY i.id_iglesia
+                    ORDER BY i.nombre_iglesia ASC";
+            $stmt = $database->prepare($sql);
+            $stmt->execute();
+            $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } elseif (isset($_GET['id'])) {
             $stmt = $database->prepare("SELECT * FROM iglesias WHERE id_iglesia = ?");
             $stmt->execute([$_GET['id']]);
             $result = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -57,8 +76,8 @@ switch ($method) {
                 echo json_encode(["error" => "No se recibieron datos"]);
                 break;
             }
-            $sql = "INSERT INTO iglesias (nombre_iglesia, direccion, cantidad_miembros, zona, tiene_terreno, tiene_casa_pastoral, latitud, longitud) 
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+            $sql = "INSERT INTO iglesias (nombre_iglesia, direccion, cantidad_miembros, zona, tiene_terreno, tiene_casa_pastoral, latitud, longitud, estatus_infraestructura, bautizados, por_bautizar, ninos) 
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             $stmt = $database->prepare($sql);
             $stmt->execute([
                 $input['nombre_iglesia'] ?? '', 
@@ -68,7 +87,11 @@ switch ($method) {
                 $input['tiene_terreno'] ?? 0,
                 $input['tiene_casa_pastoral'] ?? 0,
                 $input['latitud'] ?? null,
-                $input['longitud'] ?? null
+                $input['longitud'] ?? null,
+                $input['estatus_infraestructura'] ?? 'Propio',
+                $input['bautizados'] ?? 0,
+                $input['por_bautizar'] ?? 0,
+                $input['ninos'] ?? 0
             ]);
             echo json_encode(["message" => "Iglesia registrada con éxito", "id" => $database->lastInsertId()]);
         } catch (Exception $e) {
@@ -86,7 +109,7 @@ switch ($method) {
                 echo json_encode(["error" => "ID y datos requeridos"]);
                 break;
             }
-            $sql = "UPDATE iglesias SET nombre_iglesia=?, direccion=?, cantidad_miembros=?, zona=?, tiene_terreno=?, tiene_casa_pastoral=?, latitud=?, longitud=? 
+            $sql = "UPDATE iglesias SET nombre_iglesia=?, direccion=?, cantidad_miembros=?, zona=?, tiene_terreno=?, tiene_casa_pastoral=?, latitud=?, longitud=?, estatus_infraestructura=?, bautizados=?, por_bautizar=?, ninos=? 
                     WHERE id_iglesia=?";
             $stmt = $database->prepare($sql);
             $stmt->execute([
@@ -98,6 +121,10 @@ switch ($method) {
                 $input['tiene_casa_pastoral'] ?? 0,
                 $input['latitud'] ?? null,
                 $input['longitud'] ?? null,
+                $input['estatus_infraestructura'] ?? 'Propio',
+                $input['bautizados'] ?? 0,
+                $input['por_bautizar'] ?? 0,
+                $input['ninos'] ?? 0,
                 $id
             ]);
             echo json_encode(["message" => "Datos de la iglesia actualizados"]);

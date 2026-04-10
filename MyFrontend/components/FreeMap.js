@@ -1,6 +1,8 @@
-import React, { useRef } from 'react';
-import { View, StyleSheet } from 'react-native';
+import React, { useRef, useState } from 'react';
+import { View, StyleSheet, TouchableOpacity, Text, Alert } from 'react-native';
 import { WebView } from 'react-native-webview';
+import * as Location from 'expo-location';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 const FreeMap = ({ latitud, longitud, onLocationChange }) => {
   const webViewRef = useRef(null);
@@ -9,6 +11,37 @@ const FreeMap = ({ latitud, longitud, onLocationChange }) => {
   const parsedLng = parseFloat(longitud);
   const initialLat = !isNaN(parsedLat) ? parsedLat : 9.3700;
   const initialLng = !isNaN(parsedLng) ? parsedLng : -70.4400;
+  const [locating, setLocating] = useState(false);
+
+  const useCurrentLocation = async () => {
+    setLocating(true);
+    try {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        Alert.alert('Permiso denegado', 'Se necesita acceso a la ubicación para ubicarte en el mapa.');
+        return;
+      }
+
+      let location = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.High });
+      const { latitude, longitude } = location.coords;
+      
+      // Actualizar el mapa mediante inyección de JS
+      const script = `
+        var newLat = ${latitude};
+        var newLng = ${longitude};
+        marker.setLatLng([newLat, newLng]);
+        map.setView([newLat, newLng], 17);
+        reportCoords(newLat, newLng);
+      `;
+      webViewRef.current.injectJavaScript(script);
+      
+    } catch (error) {
+      console.error(error);
+      Alert.alert('Error', 'No se pudo obtener la ubicación actual.');
+    } finally {
+      setLocating(false);
+    }
+  };
 
   const htmlContent = `
     <!DOCTYPE html>
@@ -25,14 +58,30 @@ const FreeMap = ({ latitud, longitud, onLocationChange }) => {
       <body>
         <div id="map"></div>
         <script>
-          var map = L.map('map', { tap: false }).setView([${initialLat}, ${initialLng}], 15);
-          
-          // Usamos capas de Google Maps para mayor detalle callejero
-          L.tileLayer('https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
+          // Capas de Google Maps
+          var streetLayer = L.tileLayer('https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
             maxZoom: 20,
             subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
-            attribution: 'Google Maps'
-          }).addTo(map);
+            attribution: 'Google Road'
+          });
+
+          var satelliteLayer = L.tileLayer('https://{s}.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', {
+            maxZoom: 20,
+            subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
+            attribution: 'Google Hybrid'
+          });
+
+          var map = L.map('map', { 
+            tap: false, 
+            layers: [streetLayer] // Capa por defecto
+          }).setView([${initialLat}, ${initialLng}], 15);
+
+          // Control de Capas
+          var baseMaps = {
+            "Callejero": streetLayer,
+            "Satélite": satelliteLayer
+          };
+          L.control.layers(baseMaps, null, { position: 'topright' }).addTo(map);
 
           var marker = L.marker([${initialLat}, ${initialLng}], {
             draggable: true
@@ -95,6 +144,20 @@ const FreeMap = ({ latitud, longitud, onLocationChange }) => {
         nestedScrollEnabled={true}
         overScrollMode="never"
       />
+      <TouchableOpacity 
+        style={styles.locationBtn} 
+        onPress={useCurrentLocation}
+        disabled={locating}
+      >
+        <MaterialCommunityIcons 
+          name={locating ? "loading" : "crosshairs-gps"} 
+          size={22} 
+          color="#1A237E" 
+        />
+        <Text style={styles.locationBtnText}>
+          {locating ? "Ubicando..." : "Mi ubicación actual"}
+        </Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -105,6 +168,28 @@ const styles = StyleSheet.create({
   },
   map: {
     flex: 1,
+  },
+  locationBtn: {
+    position: 'absolute',
+    bottom: 20,
+    right: 20,
+    backgroundColor: 'rgba(255,255,255,0.95)',
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+    borderRadius: 25,
+    elevation: 5,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+  },
+  locationBtnText: {
+    color: '#1A237E',
+    fontWeight: 'bold',
+    marginLeft: 8,
+    fontSize: 13,
   },
 });
 

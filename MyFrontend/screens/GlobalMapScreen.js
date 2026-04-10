@@ -113,14 +113,35 @@ export default function GlobalMapScreen({ navigation }) {
       <body>
         <div id="map"></div>
         <script>
-          var map = L.map('map', { tap: false, zoomControl: false }).setView([9.3700, -70.4400], 10);
-          L.control.zoom({ position: 'bottomright' }).addTo(map);
-
-          L.tileLayer('https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
+          // Capas de Google Maps
+          var streetLayer = L.tileLayer('https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
             maxZoom: 20,
             subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
-            attribution: 'Google Maps'
-          }).addTo(map);
+            attribution: 'Google Road'
+          });
+
+          var satelliteLayer = L.tileLayer('https://{s}.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', {
+            maxZoom: 20,
+            subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
+            attribution: 'Google Hybrid'
+          });
+
+          var map = L.map('map', { 
+            tap: false, 
+            zoomControl: false,
+            layers: [streetLayer] // Capa inicial
+          }).setView([9.3700, -70.4400], 10);
+
+          L.control.zoom({ position: 'bottomright' }).addTo(map);
+
+          // Control de Capas
+          var baseMaps = {
+            "Callejero": streetLayer,
+            "Satélite": satelliteLayer
+          };
+          L.control.layers(baseMaps, null, { position: 'topright' }).addTo(map);
+          // Mover el control de capas un poco hacia abajo para que no lo tape el notch si fuera necesario
+          // pero Leaflet lo pone bien por defecto en topright.
 
           var churches = ${JSON.stringify(churches)};
           var userLoc = ${JSON.stringify(userLocation)};

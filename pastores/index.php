@@ -62,14 +62,18 @@ switch ($method) {
             $database->beginTransaction();
             
             // 1. Insertar el pastor
-            $sql = "INSERT INTO pastores (nombre, apellido, cedula, edad, esposa, hijos, anos_ministerio, tipo_licencia, cargo, id_iglesia, zona, estatus_activo) 
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            $sql = "INSERT INTO pastores (nombre, apellido, cedula, esposa, hijos, anos_ministerio, tipo_licencia, cargo, id_iglesia, zona, estatus_activo, estado_civil, fecha_nacimiento, telefono, direccion_habitacion, grado_academico, iglesias_pastoreadas, cargos_desempenados) 
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             $stmt = $database->prepare($sql);
             $stmt->execute([
                 $input['nombre'] ?? null, $input['apellido'] ?? null, $input['cedula'] ?? null, 
-                $input['edad'] ?? null, $input['esposa'] ?? null, $input['hijos'] ?? 0, 
+                $input['esposa'] ?? null, $input['hijos'] ?? 0, 
                 $input['anos_ministerio'] ?? null, $input['tipo_licencia'] ?? null, 
-                $input['cargo'] ?? null, $input['id_iglesia'] ?? null, $input['zona'] ?? null, $input['estatus_activo'] ?? 1
+                $input['cargo'] ?? null, $input['id_iglesia'] ?? null, $input['zona'] ?? null, 
+                $input['estatus_activo'] ?? 1, $input['estado_civil'] ?? null, 
+                $input['fecha_nacimiento'] ?? null, $input['telefono'] ?? null, 
+                $input['direccion_habitacion'] ?? null, $input['grado_academico'] ?? null, 
+                $input['iglesias_pastoreadas'] ?? null, $input['cargos_desempenados'] ?? null
             ]);
             
             $id_pastor = $database->lastInsertId();
@@ -108,15 +112,22 @@ switch ($method) {
         }
         try {
             // NOTA: Se excluye la cédula del UPDATE para evitar errores de duplicidad
-            $sql = "UPDATE pastores SET nombre=?, apellido=?, edad=?, esposa=?, hijos=?, 
-                    anos_ministerio=?, tipo_licencia=?, cargo=?, id_iglesia=?, zona=?, estatus_activo=? 
+            $sql = "UPDATE pastores SET nombre=?, apellido=?, esposa=?, hijos=?, 
+                    anos_ministerio=?, tipo_licencia=?, cargo=?, id_iglesia=?, zona=?, estatus_activo=?,
+                    estado_civil=?, fecha_nacimiento=?, telefono=?, direccion_habitacion=?, grado_academico=?,
+                    iglesias_pastoreadas=?, cargos_desempenados=?
                     WHERE id_pastor=?";
             $stmt = $database->prepare($sql);
             $stmt->execute([
-                $input['nombre'] ?? null, $input['apellido'] ?? null, $input['edad'] ?? null, 
+                $input['nombre'] ?? null, $input['apellido'] ?? null, 
                 $input['esposa'] ?? null, $input['hijos'] ?? 0, $input['anos_ministerio'] ?? null, 
                 $input['tipo_licencia'] ?? null, $input['cargo'] ?? null, $input['id_iglesia'] ?? null, 
-                $input['zona'] ?? null, $input['estatus_activo'] ?? 1, $_GET['id']
+                $input['zona'] ?? null, $input['estatus_activo'] ?? 1, 
+                $input['estado_civil'] ?? null, $input['fecha_nacimiento'] ?? null,
+                $input['telefono'] ?? null, $input['direccion_habitacion'] ?? null,
+                $input['grado_academico'] ?? null, $input['iglesias_pastoreadas'] ?? null,
+                $input['cargos_desempenados'] ?? null,
+                $_GET['id']
             ]);
             echo json_encode(["message" => "Actualizado con éxito"]);
         } catch (PDOException $e) {

@@ -49,6 +49,8 @@ import QRScannerScreen from './screens/QRScannerScreen';
 import LoginScreen from './screens/LoginScreen';
 import DepartmentMenuScreen from './screens/DepartmentMenuScreen';
 import GlobalMapScreen from './screens/GlobalMapScreen';
+import DetailScreen from './screens/DetailScreen';
+import DirectoryScreen from './screens/DirectoryScreen';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -82,6 +84,8 @@ function SharedStack({ user, handleLogout }) {
       <Stack.Screen name="Attendance" component={AttendanceScreen} options={{ title: 'Control de Asistencia' }} />
       <Stack.Screen name="QRScanner" component={QRScannerScreen} options={{ headerShown: false }} />
       <Stack.Screen name="GlobalMap" component={GlobalMapScreen} options={{ headerShown: false }} />
+      <Stack.Screen name="Detail" component={DetailScreen} options={{ title: 'Detalles' }} />
+      <Stack.Screen name="Directorio" component={DirectoryScreen} options={{ title: 'Directorio de Iglesias' }} />
     </Stack.Navigator>
   );
 }
@@ -114,6 +118,8 @@ const SecretariaStack = ({ user, handleLogout }) => (
     <Stack.Screen name="DetalleReporte" component={ReportDetailScreen} options={{ title: 'Detalle de Reporte' }} />
     <Stack.Screen name="Attendance" component={AttendanceScreen} options={{ title: 'Control de Asistencia' }} />
     <Stack.Screen name="QRScanner" component={QRScannerScreen} options={{ headerShown: false }} />
+    <Stack.Screen name="Detail" component={DetailScreen} options={{ title: 'Detalles' }} />
+    <Stack.Screen name="Directorio" component={DirectoryScreen} options={{ title: 'Directorio de Iglesias' }} />
   </Stack.Navigator>
 );
 
@@ -141,6 +147,7 @@ const TesoreriaStack = ({ user, handleLogout }) => (
     <Stack.Screen name="Edit" component={EditScreen} options={{ title: 'Editar Registro' }} />
     <Stack.Screen name="Attendance" component={AttendanceScreen} options={{ title: 'Control de Asistencia' }} />
     <Stack.Screen name="QRScanner" component={QRScannerScreen} options={{ headerShown: false }} />
+    <Stack.Screen name="Detail" component={DetailScreen} options={{ title: 'Detalles' }} />
   </Stack.Navigator>
 );
 

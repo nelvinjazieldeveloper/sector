@@ -36,14 +36,6 @@ export default function DepartmentMenuScreen({ route, navigation, user }) {
                     index={0} title="Pastores" subtitle="Gestión ministerial" color="#2E7D32" 
                     onPress={() => navigation.navigate('Pastores', { path: 'pastores', title: 'Pastores', user_rol: user.rol, ...extraParams })} 
                   />
-                  <MenuButton 
-                    index={1} title="Iglesias" subtitle="Sedes y membresía" color="#1A237E" 
-                    onPress={() => navigation.navigate('Iglesias', { path: 'iglesias', title: 'Iglesias', user_rol: user.rol, ...extraParams })} 
-                  />
-                  <MenuButton 
-                    index={2} title="Hijos" subtitle="Registro familiar" color="#C62828" 
-                    onPress={() => navigation.navigate('Hijos', { path: 'hijos', title: 'Hijos', user_rol: user.rol, ...extraParams })} 
-                  />
                 </>
               )}
               <MenuButton 

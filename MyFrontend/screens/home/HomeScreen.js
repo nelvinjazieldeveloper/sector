@@ -123,6 +123,11 @@ export default function HomeScreen({ navigation, user }) {
             title="Mapa de Iglesias" subtitle="Ubicación y rutas" color="#1A237E" 
             onPress={() => navigation.navigate('GlobalMap')} 
           />
+          <MenuButton 
+            index={0.5}
+            title="Directorio del Sector" subtitle="Contactos y Direcciones" color="#E91E63" 
+            onPress={() => navigation.navigate('Directorio')} 
+          />
 
           {/* SECCIÓN SECRETARÍA */}
           <View style={styles.sectionHeader}>
@@ -135,16 +140,6 @@ export default function HomeScreen({ navigation, user }) {
                 index={1}
                 title="Pastores" subtitle={isPastor ? "Mi perfil ministerial" : "Gestión ministerial"} color="#2E7D32" 
                 onPress={() => navigation.navigate('Pastores', { path: 'pastores', title: 'Pastores', user_rol: user.rol, ...extraParams })} 
-              />
-              <MenuButton 
-                index={2}
-                title="Iglesias" subtitle={isPastor ? "Mi congregación" : "Sedes y membresía"} color="#1A237E" 
-                onPress={() => navigation.navigate('Iglesias', { path: 'iglesias', title: 'Iglesias', user_rol: user.rol, ...extraParams })} 
-              />
-              <MenuButton 
-                index={3}
-                title="Hijos" subtitle="Registro familiar" color="#C62828" 
-                onPress={() => navigation.navigate('Hijos', { path: 'hijos', title: 'Hijos', user_rol: user.rol, ...extraParams })} 
               />
             </>
           )}

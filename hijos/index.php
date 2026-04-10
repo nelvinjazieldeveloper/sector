@@ -20,7 +20,7 @@ switch ($method) {
     case 'GET':
         if (isset($_GET['id_pastor'])) {
             // Hijos de un pastor específico con el nombre del padre
-            $sql = "SELECT h.*, CONCAT(p.nombre, ' ', p.apellido) AS pastor_nombre 
+            $sql = "SELECT h.*, CONCAT(p.nombre, ' ', p.apellido) AS pastor_nombre
                     FROM hijos_pastores h
                     LEFT JOIN pastores p ON h.id_pastor = p.id_pastor
                     WHERE h.id_pastor = ?";
@@ -30,7 +30,7 @@ switch ($method) {
         } 
         elseif (isset($_GET['id'])) {
             // Un hijo específico con el nombre del padre
-            $sql = "SELECT h.*, CONCAT(p.nombre, ' ', p.apellido) AS pastor_nombre 
+            $sql = "SELECT h.*, CONCAT(p.nombre, ' ', p.apellido) AS pastor_nombre
                     FROM hijos_pastores h
                     LEFT JOIN pastores p ON h.id_pastor = p.id_pastor
                     WHERE h.id_hijo = ?";
@@ -39,7 +39,7 @@ switch ($method) {
             $result = $stmt->fetch(PDO::FETCH_ASSOC);
         } else {
             // Todos los hijos con el nombre del padre
-            $sql = "SELECT h.*, CONCAT(p.nombre, ' ', p.apellido) AS pastor_nombre 
+            $sql = "SELECT h.*, CONCAT(p.nombre, ' ', p.apellido) AS pastor_nombre
                     FROM hijos_pastores h
                     LEFT JOIN pastores p ON h.id_pastor = p.id_pastor
                     ORDER BY h.id_hijo DESC";
@@ -56,14 +56,14 @@ switch ($method) {
             echo json_encode(["error" => "Datos no recibidos"]);
             break;
         }
-        $sql = "INSERT INTO hijos_pastores (id_pastor, nombre, apellido, sexo, edad, talentos, estudios) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        $sql = "INSERT INTO hijos_pastores (id_pastor, nombre, apellido, sexo, fecha_nacimiento, talentos, estudios) VALUES (?, ?, ?, ?, ?, ?, ?)";
         $stmt = $database->prepare($sql);
         $stmt->execute([
             $input['id_pastor'], 
             $input['nombre'], 
             $input['apellido'], 
             $input['sexo'], 
-            $input['edad'],
+            $input['fecha_nacimiento'] ?? null,
             $input['talentos'] ?? '',
             $input['estudios'] ?? ''
         ]);
@@ -78,13 +78,13 @@ switch ($method) {
         }
         // Nota: usualmente no cambiamos el id_pastor al editar al hijo, 
         // pero si lo necesitas, agrégalo al SET y al execute.
-        $sql = "UPDATE hijos_pastores SET nombre=?, apellido=?, sexo=?, edad=?, talentos=?, estudios=? WHERE id_hijo=?";
+        $sql = "UPDATE hijos_pastores SET nombre=?, apellido=?, sexo=?, fecha_nacimiento=?, talentos=?, estudios=? WHERE id_hijo=?";
         $stmt = $database->prepare($sql);
         $stmt->execute([
             $input['nombre'], 
             $input['apellido'], 
             $input['sexo'], 
-            $input['edad'], 
+            $input['fecha_nacimiento'] ?? null, 
             $input['talentos'] ?? '',
             $input['estudios'] ?? '',
             $_GET['id']
