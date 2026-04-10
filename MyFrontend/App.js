@@ -61,11 +61,11 @@ function SharedStack({ user, handleLogout }) {
     <Stack.Navigator 
       screenOptions={{ 
         headerTintColor: '#FFF',
-        headerStyle: { backgroundColor: '#1A237E' },
+        headerStyle: { backgroundColor: '#2dabff' },
         headerTitleStyle: { fontWeight: 'bold' },
         headerRight: () => (
           <TouchableOpacity onPress={handleLogout} style={{ marginRight: 15 }}>
-            <Text style={{ color: '#FFD700', fontWeight: 'bold', fontSize: 12 }}>SALIR</Text>
+            <Text style={{ color: '#ffffff', fontWeight: 'bold', fontSize: 12 }}>SALIR</Text>
           </TouchableOpacity>
         )
       }}
@@ -165,10 +165,10 @@ function MainTabs({ user, onLogout }) {
           else if (route.name === 'Admin') iconName = 'shield-account';
           return <MaterialCommunityIcons name={iconName} size={size} color={color} />;
         },
-        tabBarActiveTintColor: '#FFD700',
-        tabBarInactiveTintColor: '#BBDEFB',
+        tabBarActiveTintColor: '#000000b0',
+        tabBarInactiveTintColor: '#ffffff',
         tabBarStyle: { 
-          backgroundColor: '#1A237E', 
+          backgroundColor: '#2dabff', 
           borderTopWidth: 0, 
           height: 95, 
           paddingBottom: 35,

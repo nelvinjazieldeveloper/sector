@@ -88,7 +88,7 @@ export default function HomeScreen({ navigation, user }) {
 
   return (
     <LinearGradient
-      colors={['#1A237E', '#3949AB', '#5C6BC0']}
+      colors={['#FAFAFA','#EAEAFA']}
       style={{ flex: 1 }}
     >
       <ScrollView 
@@ -120,12 +120,12 @@ export default function HomeScreen({ navigation, user }) {
           </View>
           <MenuButton 
             index={0}
-            title="Mapa de Iglesias" subtitle="Ubicación y rutas" color="#1A237E" 
+            title="Mapa de Iglesias" subtitle="Ubicación y rutas" color="#DE1A1A" 
             onPress={() => navigation.navigate('GlobalMap')} 
           />
           <MenuButton 
             index={0.5}
-            title="Directorio del Sector" subtitle="Contactos y Direcciones" color="#E91E63" 
+            title="Directorio del Sector" subtitle="Contactos y Direcciones" color="#DE1A1A" 
             onPress={() => navigation.navigate('Directorio')} 
           />
 
@@ -138,7 +138,7 @@ export default function HomeScreen({ navigation, user }) {
             <>
               <MenuButton 
                 index={1}
-                title="Pastores" subtitle={isPastor ? "Mi perfil ministerial" : "Gestión ministerial"} color="#2E7D32" 
+                title="Pastores" subtitle={isPastor ? "Mi perfil ministerial" : "Gestión ministerial"} color="#7510d4" 
                 onPress={() => navigation.navigate('Pastores', { path: 'pastores', title: 'Pastores', user_rol: user.rol, ...extraParams })} 
               />
             </>
@@ -147,7 +147,7 @@ export default function HomeScreen({ navigation, user }) {
           {/* Reuniones es Operativo para todos */}
           <MenuButton 
             index={4}
-            title="Reuniones" subtitle="Agenda sectorial" color="#6A1B9A" 
+            title="Reuniones" subtitle="Agenda sectorial" color="#7510d4" 
             onPress={() => navigation.navigate('Reuniones', { path: 'reuniones', title: 'Reuniones', user_rol: user.rol })} 
           />
 
@@ -157,7 +157,7 @@ export default function HomeScreen({ navigation, user }) {
           </View>
           <MenuButton 
             index={4}
-            title="Reportes" subtitle="Finanzas y estadísticas" color="#D4AF37" 
+            title="Reportes" subtitle="Finanzas y estadísticas" color="#44d437" 
             onPress={() => navigation.navigate('Reportes', { path: 'reporte', title: 'Reportes', user_rol: user.rol, ...extraParams })} 
           />
 
@@ -200,8 +200,8 @@ const styles = StyleSheet.create({
     overflow: 'hidden', // Asegura que el logo no se salga del círculo
   },
   logo: { width: '100%', height: '100%', resizeMode: 'cover' },
-  welcome: { fontSize: 16, color: '#E8EAF6', fontWeight: '500', opacity: 0.9 },
-  title: { fontSize: 24, fontWeight: 'bold', color: '#FFF' },
+  welcome: { fontSize: 16, color: '#2dabff', fontWeight: '500' },
+  title: { fontSize: 24, fontWeight: 'bold', color: '#2dabff' },
   menuGrid: { gap: 15, paddingBottom: 40 },
   card: {
     backgroundColor: 'rgba(255,255,255,0.95)',
@@ -232,7 +232,7 @@ const styles = StyleSheet.create({
     paddingBottom: 5
   },
   sectionTitle: { 
-    color: '#FFD700', 
+    color: '#2dabff', 
     fontSize: 16, 
     fontWeight: 'bold', 
     textTransform: 'uppercase', 
@@ -243,4 +243,4 @@ const styles = StyleSheet.create({
 // Final del archivo - Cerramos ScrollView y LinearGradient
 export const Footer = () => (
   <View style={{ height: 40 }} />
-);
+);

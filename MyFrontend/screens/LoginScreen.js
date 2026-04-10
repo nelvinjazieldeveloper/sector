@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import * as Font from 'expo-font';
+import React, { useState, useEffect } from 'react';
 import { 
   View, Text, TextInput, TouchableOpacity, StyleSheet, 
   Alert, ActivityIndicator, KeyboardAvoidingView, Platform 
@@ -44,13 +45,28 @@ export default function LoginScreen({ navigation, onLoginSuccess }) {
       setLoading(false);
     }
   };
-
+      const [fontsLoaded, setFontsLoaded] = useState(false);
+    useEffect(() => {
+  async function loadFonts() {
+    await Font.loadAsync({
+      // "Apodo" que tú inventas : Ruta real del archivo
+        'titulo': require('../assets/fonts/Boldonse/Boldonse-Regular.ttf'),   });
+    
+    // Una vez que termina de cargar, cambiamos el estado a true
+    setFontsLoaded(true);
+  }
+  
+  loadFonts();
+}, []);
   return (
-    <LinearGradient colors={['#1A237E', '#3949AB']} style={styles.container}>
+    <LinearGradient colors={['#FAFAFA','#EAEAFA']} style={styles.container}>
       <KeyboardAvoidingView 
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={styles.keyboardView}
       >
+        <view style={styles.parrafo}>
+          <Text style={[styles.titulo, {fontSize: 40, fontFamily: 'titulo', color: '#1A237E'}]} >EFECTO ESDRAS</Text>
+          </view>
         <View style={styles.card}>
           <Text style={styles.logo}>SECTOR</Text>
           <Text style={styles.subtitle}>Sistema de Gestión Ministerial</Text>
@@ -112,6 +128,7 @@ const styles = StyleSheet.create({
     shadowRadius: 10
   },
   logo: { 
+
     fontSize: 32, 
     fontWeight: 'bold', 
     color: '#1A237E', 
