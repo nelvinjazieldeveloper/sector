@@ -15,13 +15,13 @@ export default function DepartmentMenuScreen({ route, navigation, user }) {
   const extraParams = !isSectorStaff && user?.id_pastor ? { id_pastor: user.id_pastor } : {};
 
   return (
-    <LinearGradient colors={['#1A237E', '#3949AB']} style={styles.container}>
+    <LinearGradient colors={['#FAFAFA', '#EAEAFA']} style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.header}>
-          <MaterialCommunityIcons 
-            name={department === 'Secretaría' ? 'folder-account' : 'cash-register'} 
-            size={60} 
-            color="#FFD700" 
+          <MaterialCommunityIcons
+            name={department === 'Secretaría' ? 'folder-account' : 'cash-register'}
+            size={60}
+            color="#FFD700"
           />
           <Text style={styles.title}>{title}</Text>
           <Text style={styles.subtitle}>Módulos Administrativos</Text>
@@ -32,24 +32,24 @@ export default function DepartmentMenuScreen({ route, navigation, user }) {
             <>
               {isManager && (
                 <>
-                  <MenuButton 
-                    index={0} title="Pastores" subtitle="Gestión ministerial" color="#2E7D32" 
-                    onPress={() => navigation.navigate('Pastores', { path: 'pastores', title: 'Pastores', user_rol: user.rol, ...extraParams })} 
+                  <MenuButton
+                    index={0} title="Pastores" subtitle="Gestión ministerial" color="#7510d4"
+                    onPress={() => navigation.navigate('Pastores', { path: 'pastores', title: 'Pastores', user_rol: user.rol, ...extraParams })}
                   />
                 </>
               )}
-              <MenuButton 
-                index={3} title="Reuniones" subtitle="Agenda sectorial" color="#6A1B9A" 
-                onPress={() => navigation.navigate('Reuniones', { path: 'reuniones', title: 'Reuniones', user_rol: user.rol })} 
+              <MenuButton
+                index={3} title="Reuniones" subtitle="Agenda sectorial" color="#7510d4"
+                onPress={() => navigation.navigate('Reuniones', { path: 'reuniones', title: 'Reuniones', user_rol: user.rol })}
               />
             </>
           )}
 
           {department === 'Tesorería' && (
             <>
-              <MenuButton 
-                index={0} title="Reportes" subtitle="Finanzas y estadísticas" color="#D4AF37" 
-                onPress={() => navigation.navigate('Reportes', { path: 'reporte', title: 'Reportes', user_rol: user.rol, ...extraParams })} 
+              <MenuButton
+                index={0} title="Reportes" subtitle="Finanzas y estadísticas" color="#44d437"
+                onPress={() => navigation.navigate('Reportes', { path: 'reporte', title: 'Reportes', user_rol: user.rol, ...extraParams })}
               />
               {/* Espacio para futuros módulos de tesorería */}
             </>
@@ -64,7 +64,7 @@ const styles = StyleSheet.create({
   container: { flex: 1 },
   scrollContent: { padding: 20, paddingTop: 60, paddingBottom: 100 },
   header: { alignItems: 'center', marginBottom: 40 },
-  title: { fontSize: 32, fontWeight: 'bold', color: '#FFF', marginTop: 10 },
-  subtitle: { fontSize: 16, color: '#BBDEFB', opacity: 0.8 },
+  title: { fontSize: 32, fontWeight: 'bold', color: '#2dabff', marginTop: 10 },
+  subtitle: { fontSize: 16, color: '#2dabff', opacity: 0.8 },
   menuContainer: { width: '100%' }
 });

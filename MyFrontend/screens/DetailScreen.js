@@ -235,7 +235,7 @@ const DetailScreen = ({ route, navigation }) => {
                   style={styles.linkCard} 
                   onPress={() => navigation.navigate('Detail', { path: 'iglesias', item: church, user_rol })}
                 >
-                  <MaterialCommunityIcons name="church" size={24} color="#1A237E" />
+                  <MaterialCommunityIcons name="church" size={24} color="#2dabff" />
                   <View style={{ marginLeft: 10 }}>
                     <Text style={styles.linkTitle}>{church.nombre_iglesia}</Text>
                     <Text style={styles.linkSubtitle}>{church.direccion}</Text>
@@ -410,7 +410,7 @@ const styles = StyleSheet.create({
     marginBottom: 20
   },
   infoboxHeader: { backgroundColor: '#E8EAF6', padding: 5, marginBottom: 10, alignItems: 'center' },
-  infoboxTitle: { fontWeight: 'bold', color: '#1A237E' },
+  infoboxTitle: { fontWeight: 'bold', color: '#2dabff' },
   infoboxRow: { flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 4, borderBottomWidth: 0.5, borderBottomColor: '#EEE' },
   infoboxLabel: { fontWeight: 'bold', fontSize: 12, color: '#555', width: '40%' },
   infoboxValue: { fontSize: 12, color: '#333', width: '60%', textAlign: 'right' },
@@ -431,19 +431,19 @@ const styles = StyleSheet.create({
     borderColor: '#EEE',
     marginBottom: 10
   },
-  linkTitle: { fontWeight: 'bold', color: '#1A237E', fontSize: 15 },
+  linkTitle: { fontWeight: 'bold', color: '#2dabff', fontSize: 15 },
   linkSubtitle: { fontSize: 12, color: '#666' },
   emptyText: { fontStyle: 'italic', color: '#999', marginBottom: 10 },
-  btnAddSmall: { padding: 8, borderWidth: 1, borderColor: '#1A237E', borderRadius: 5, alignSelf: 'flex-start', marginTop: 5 },
-  btnAddSmallText: { color: '#1A237E', fontSize: 12, fontWeight: 'bold' },
-  mapBtn: { backgroundColor: '#1A237E', padding: 15, borderRadius: 10, flexDirection: 'row', justifyContent: 'center', alignItems: 'center' },
+  btnAddSmall: { padding: 8, borderWidth: 1, borderColor: '#2dabff', borderRadius: 5, alignSelf: 'flex-start', marginTop: 5 },
+  btnAddSmallText: { color: '#2dabff', fontSize: 12, fontWeight: 'bold' },
+  mapBtn: { backgroundColor: '#2dabff', padding: 15, borderRadius: 10, flexDirection: 'row', justifyContent: 'center', alignItems: 'center' },
   mapBtnText: { color: '#FFF', fontWeight: 'bold', marginLeft: 10 },
   actions: { flexDirection: 'row', justifyContent: 'space-around', padding: 20, borderTopWidth: 1, borderTopColor: '#EEE' },
-  editBtn: { backgroundColor: '#1A237E', paddingVertical: 12, paddingHorizontal: 25, borderRadius: 8, flexDirection: 'row', alignItems: 'center', flex: 1, marginRight: 10, justifyContent: 'center' },
+  editBtn: { backgroundColor: '#2dabff', paddingVertical: 12, paddingHorizontal: 25, borderRadius: 8, flexDirection: 'row', alignItems: 'center', flex: 1, marginRight: 10, justifyContent: 'center' },
   deleteBtn: { backgroundColor: '#C62828', paddingVertical: 12, paddingHorizontal: 25, borderRadius: 8, flexDirection: 'row', alignItems: 'center', flex: 1, justifyContent: 'center' },
   btnText: { color: '#FFF', fontWeight: 'bold', marginLeft: 8 },
   backLink: { padding: 20, alignItems: 'center' },
-  backLinkText: { color: '#1A237E', fontWeight: 'bold', textDecorationLine: 'underline' }
+  backLinkText: { color: '#2dabff', fontWeight: 'bold', textDecorationLine: 'underline' }
 });
 
 export default DetailScreen;

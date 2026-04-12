@@ -11,7 +11,7 @@ const ReunionListItem = ({ item, onPress, user_rol }) => {
     <View style={[styles.card, { borderLeftColor: '#6A1B9A', borderLeftWidth: 5 }]}>
       <TouchableOpacity style={styles.cardMain} onPress={onPress}>
         <View style={styles.cardHeader}>
-          <Text style={[styles.mainLabel, { color: '#6A1B9A' }]}>{item.titulo || "Sin título"}</Text>
+          <Text style={[styles.mainLabel, { color: '#2dabff' }]}>{item.titulo || "Sin título"}</Text>
           <Text style={styles.idBadge}>#{item.id_reunion}</Text>
         </View>
         <View>
@@ -26,7 +26,7 @@ const ReunionListItem = ({ item, onPress, user_rol }) => {
             style={styles.attendanceBtn} 
             onPress={() => navigation.navigate('Attendance', { meeting: item })}
           >
-            <Text style={styles.attendanceBtnText}>📋 PASAR ASISTENCIA</Text>
+            <Text style={styles.attendanceBtnText}> PASAR ASISTENCIA</Text>
           </TouchableOpacity>
         </View>
       )}
@@ -39,11 +39,11 @@ const styles = StyleSheet.create({
   cardMain: { padding: 15 },
   cardHeader: { flexDirection: 'row', justifyContent: 'space-between', borderBottomWidth: 1, borderBottomColor: '#F0F0F0', paddingBottom: 5, marginBottom: 8 },
   mainLabel: { fontSize: 16, fontWeight: 'bold', color: '#1A237E', flex: 1 },
-  idBadge: { backgroundColor: '#F3E5F5', paddingHorizontal: 8, borderRadius: 6, color: '#6A1B9A', fontSize: 12, fontWeight: 'bold' },
+  idBadge: { backgroundColor: '#F3E5F5', paddingHorizontal: 8, borderRadius: 6, color: '#2dabff', fontSize: 12, fontWeight: 'bold' },
   infoText: { fontSize: 14, color: '#555', marginBottom: 2 },
   cardFooter: { borderTopWidth: 1, borderTopColor: '#F0F0F0', backgroundColor: '#FAFAFA' },
   attendanceBtn: { padding: 12, alignItems: 'center', backgroundColor: '#F3E5F5' },
-  attendanceBtnText: { color: '#6A1B9A', fontWeight: 'bold', fontSize: 13, letterSpacing: 0.5 },
+  attendanceBtnText: { color: '#2dabff', fontWeight: 'bold', fontSize: 13, letterSpacing: 0.5 },
 });
 
 export default ReunionListItem;

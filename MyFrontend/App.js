@@ -94,11 +94,11 @@ function SharedStack({ user, handleLogout }) {
 const SecretariaStack = ({ user, handleLogout }) => (
   <Stack.Navigator 
     screenOptions={{ 
-      headerStyle: { backgroundColor: '#1A237E' }, 
+      headerStyle: { backgroundColor: '#2dabff' }, 
       headerTintColor: '#FFF',
       headerRight: () => (
         <TouchableOpacity onPress={handleLogout} style={{ marginRight: 15 }}>
-          <Text style={{ color: '#FFD700', fontWeight: 'bold', fontSize: 12 }}>SALIR</Text>
+          <Text style={{ color: '#ffffffff', fontWeight: 'bold', fontSize: 12 }}>SALIR</Text>
         </TouchableOpacity>
       )
     }}
@@ -126,11 +126,11 @@ const SecretariaStack = ({ user, handleLogout }) => (
 const TesoreriaStack = ({ user, handleLogout }) => (
   <Stack.Navigator 
     screenOptions={{ 
-      headerStyle: { backgroundColor: '#1A237E' }, 
+      headerStyle: { backgroundColor: '#2dabff' }, 
       headerTintColor: '#FFF',
       headerRight: () => (
         <TouchableOpacity onPress={handleLogout} style={{ marginRight: 15 }}>
-          <Text style={{ color: '#FFD700', fontWeight: 'bold', fontSize: 12 }}>SALIR</Text>
+          <Text style={{ color: '#ffffffff', fontWeight: 'bold', fontSize: 12 }}>SALIR</Text>
         </TouchableOpacity>
       )
     }}
@@ -190,7 +190,7 @@ function MainTabs({ user, onLogout }) {
       {isAdmin && (
         <Tab.Screen name="Admin">
           {props => (
-            <Stack.Navigator screenOptions={{ headerStyle: { backgroundColor: '#1A237E' }, headerTintColor: '#FFF' }}>
+            <Stack.Navigator screenOptions={{ headerStyle: { backgroundColor: '#2dabff' }, headerTintColor: '#FFF' }}>
               <Stack.Screen name="AdminList" component={ListScreen} initialParams={{ path: 'usuarios', title: 'Usuarios', user_rol: user.rol }} options={{ title: 'Gestión de Usuarios' }} />
             </Stack.Navigator>
           )}
@@ -227,7 +227,7 @@ export default function App() {
 
   if (loading) {
     return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#1A237E' }}>
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#2dabff' }}>
         <ActivityIndicator size="large" color="#FFD700" />
       </View>
     );

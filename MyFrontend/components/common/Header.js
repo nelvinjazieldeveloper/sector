@@ -16,9 +16,9 @@ const Header = ({ title, onAddPress, hideAdd = false }) => {
 
 const styles = StyleSheet.create({
   header: { flexDirection: 'row', justifyContent: 'space-between', padding: 20, backgroundColor: '#FFF' },
-  title: { fontSize: 20, fontWeight: 'bold', color: '#1A237E' },
+  title: { fontSize: 20, fontWeight: 'bold', color: '#2dabff' },
   btnAdd: { backgroundColor: '#E8EAF6', padding: 8, borderRadius: 8 },
-  btnAddText: { color: '#1A237E', fontWeight: 'bold' },
+  btnAddText: { color: '#2dabff', fontWeight: 'bold' },
 });
 
 export default Header;

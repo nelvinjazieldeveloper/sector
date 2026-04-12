@@ -226,7 +226,7 @@ export default function EditScreen({ route, navigation }) {
           <Text style={{ color: formData[key] ? '#333' : '#999' }}>
             {formData[key] || "Seleccione fecha..."}
           </Text>
-          <MaterialCommunityIcons name="calendar" size={20} color="#1A237E" />
+          <MaterialCommunityIcons name="calendar" size={20} color="#2dabff" />
         </TouchableOpacity>
         {showDatePicker && (
           <DateTimePicker
@@ -249,7 +249,7 @@ export default function EditScreen({ route, navigation }) {
           onPress={() => !readOnly && setFormData({ ...formData, [key]: 'Masculino' })}
           disabled={readOnly}
         >
-          <MaterialCommunityIcons name="gender-male" size={20} color={formData[key] === 'Masculino' ? '#FFF' : '#1A237E'} />
+          <MaterialCommunityIcons name="gender-male" size={20} color={formData[key] === 'Masculino' ? '#FFF' : '#2dabff'} />
           <Text style={[styles.genderBtnText, formData[key] === 'Masculino' && styles.genderBtnTextActive]}>Masculino</Text>
         </TouchableOpacity>
         <TouchableOpacity 
@@ -257,7 +257,7 @@ export default function EditScreen({ route, navigation }) {
           onPress={() => !readOnly && setFormData({ ...formData, [key]: 'Femenino' })}
           disabled={readOnly}
         >
-          <MaterialCommunityIcons name="gender-female" size={20} color={formData[key] === 'Femenino' ? '#FFF' : '#1A237E'} />
+          <MaterialCommunityIcons name="gender-female" size={20} color={formData[key] === 'Femenino' ? '#FFF' : '#2dabff'} />
           <Text style={[styles.genderBtnText, formData[key] === 'Femenino' && styles.genderBtnTextActive]}>Femenino</Text>
         </TouchableOpacity>
       </View>
@@ -329,7 +329,7 @@ export default function EditScreen({ route, navigation }) {
                     setSearchQuery("");
                   }}
                 >
-                  <MaterialCommunityIcons name="church" size={20} color="#1A237E" />
+                  <MaterialCommunityIcons name="church" size={20} color="#2dabff" />
                   <View style={{ marginLeft: 10 }}>
                     <Text style={styles.churchItemName}>{item.nombre_iglesia}</Text>
                     <Text style={styles.churchItemZone}>Zona {item.zona}</Text>
@@ -345,8 +345,8 @@ export default function EditScreen({ route, navigation }) {
                     navigation.navigate("Edit", { path: "iglesias", item: {}, origin: "EditPastor" });
                   }}
                 >
-                  <MaterialCommunityIcons name="plus-circle" size={20} color="#1A237E" />
-                  <Text style={[styles.churchItemName, { marginLeft: 10, color: '#1A237E' }]}>Registrar nueva iglesia...</Text>
+                  <MaterialCommunityIcons name="plus-circle" size={20} color="#2dabff" />
+                  <Text style={[styles.churchItemName, { marginLeft: 10, color: '#2dabff' }]}>Registrar nueva iglesia...</Text>
                 </TouchableOpacity>
               )}
               ListEmptyComponent={() => (
@@ -373,7 +373,7 @@ export default function EditScreen({ route, navigation }) {
           disabled={readOnly}
         >
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <MaterialCommunityIcons name="church" size={20} color="#1A237E" style={{ marginRight: 10 }} />
+            <MaterialCommunityIcons name="church" size={20} color="#2dabff" style={{ marginRight: 10 }} />
             <Text style={{ flex: 1, color: selectedChurch ? '#333' : '#999' }}>
               {selectedChurch ? `${selectedChurch.nombre_iglesia} (Zona ${selectedChurch.zona})` : "Seleccione una iglesia..."}
             </Text>
@@ -512,7 +512,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 22,
     fontWeight: "bold",
-    color: "#1A237E",
+    color: "#2dabff",
     marginBottom: 20,
   },
   inputGroup: { marginBottom: 15 },
@@ -538,17 +538,17 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginVertical: 10,
   },
-  infraTitle: { fontWeight: "bold", color: "#1A237E", marginBottom: 10 },
+  infraTitle: { fontWeight: "bold", color: "#2dabff", marginBottom: 10 },
   switchRow: { flexDirection: "row", alignItems: "center", marginBottom: 10 },
   checkbox: {
     width: 22,
     height: 22,
     borderWidth: 2,
-    borderColor: "#1A237E",
+    borderColor: "#2dabff",
     borderRadius: 5,
     marginRight: 10,
   },
-  checked: { backgroundColor: "#1A237E" },
+  checked: { backgroundColor: "#000000ff" },
   switchLabel: { fontSize: 15, color: "#333" },
   totalBox: {
     flexDirection: 'row',
@@ -562,15 +562,15 @@ const styles = StyleSheet.create({
   totalLabel: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#1A237E',
+    color: '#2dabff',
   },
   totalValue: {
     fontSize: 18,
     fontWeight: '900',
-    color: '#1A237E',
+    color: '#2dabff',
   },
   btnSave: {
-    backgroundColor: "#1A237E",
+    backgroundColor: "#2dabff",
     padding: 15,
     borderRadius: 10,
     alignItems: "center",
@@ -620,7 +620,7 @@ const styles = StyleSheet.create({
   modalTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#1A237E',
+    color: '#2dabff',
   },
   searchBar: {
     flexDirection: 'row',
@@ -668,17 +668,17 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     padding: 12,
     borderWidth: 1,
-    borderColor: '#1A237E',
+    borderColor: '#2dabff',
     borderRadius: 8,
     backgroundColor: '#FFF',
   },
   genderBtnActive: {
-    backgroundColor: '#1A237E',
+    backgroundColor: '#000000ff',
   },
   genderBtnText: {
     marginLeft: 8,
     fontWeight: 'bold',
-    color: '#1A237E',
+    color: '#2dabff',
   },
   genderBtnTextActive: {
     color: '#FFF',
